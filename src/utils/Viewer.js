@@ -5,39 +5,19 @@ import TimeSlider from './TimeSlider.js';
 import OsuWindow from './OsuWindow.js';
 
 class Viewer extends React.Component {
-  state = {
-    windowSize: 0,
-  }
-  updateWindowSize = () => {
-    this.setState(() => {
-      return {windowSize: Math.min(window.innerWidth,window.innerHeight-14)}
-    })
-  }
-  componentDidMount() {
-    window.addEventListener('resize', this.updateWindowSize.bind(this))
-    this.updateWindowSize()
-  }
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.updateWindowSize.bind(this))
-  }
-
   render() {
-    const currCursorStatus = CursorStatus()
-    const totalTime = 60
-    const divStyle = {
-      height: this.state.windowSize + 'px',
-      width: this.state.windowSize + 'px'
-    };
+    const currCursorStatus = new CursorStatus();
+    const totalReplayLength = currCursorStatus.getReplayLength() / 1000;
     return (
       <TimeKeeper
-        totalTime = {totalTime}
+        totalTime = {totalReplayLength}
         cursorStatus = {currCursorStatus}
         render={({currTime,currCursorPos,timeControls}) =>
-          <div style={divStyle}>
+          <div>
             <TimeSlider 
               value={currTime}
               onChange={timeControls.setCurrTime}
-              totalTime={totalTime}
+              totalTime={totalReplayLength}
             />
             <OsuWindow
               currCursorPos={currCursorPos}

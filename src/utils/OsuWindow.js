@@ -4,30 +4,35 @@ import Cursor from './Cursor.js'
 
 class OsuWindow extends React.Component {
   state = {
-    windowSize: 0,
+    windowScale: 0,
   }
-  updateWindowSize = () => {
+  updatewindowScale = () => {
     this.setState(() => {
-      return {windowSize: Math.min(window.innerWidth,window.innerHeight-14)}
+      if (window.innerHeight * 512 >= window.innerWidth * 384) {
+        return ({ windowScale: window.innerWidth / 512})
+      }
+      if (window.innerHeight * 512 < window.innerWidth * 384) {
+        return ({ windowScale: window.innerHeight / 384})
+      }
     })
   }
   componentDidMount() {
-    window.addEventListener('resize', this.updateWindowSize.bind(this))
-    this.updateWindowSize()
+    window.addEventListener('resize', this.updatewindowScale.bind(this))
+    this.updatewindowScale()
   }
   componentWillUnmount() {
-    window.removeEventListener('resize', this.updateWindowSize.bind(this))
+    window.removeEventListener('resize', this.updatewindowScale.bind(this))
   }
 
   render(){
     return (
-      <Stage width={this.state.windowSize} height={this.state.windowSize}>
+      <Stage width={this.state.windowScale * 512} height={this.state.windowScale * 384}>
         <Layer>
-          <Rect width={this.state.windowSize} height={this.state.windowSize} fill='black' opacity={0.3} />
+          <Rect width={this.state.windowScale * 512} height={this.state.windowScale * 384} fill='black' opacity={0.3} />
            <Cursor
               currPos={this.props.currCursorPos}
-              windowSize={this.state.windowSize}
-              radius={this.state.windowSize/40}
+              windowScale={this.state.windowScale}
+              radius={this.state.windowScale * 10}
             />
         </Layer>
       </Stage>

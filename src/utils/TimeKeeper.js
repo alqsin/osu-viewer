@@ -4,7 +4,7 @@ class TimeKeeper extends React.Component {
   // props are {totalTime}
   state = {
     timeSpeed: 1,
-    currTime: 1000,
+    currTime: 0,
   }
 
   setCurrTime = val => {this.setState({currTime: val})}

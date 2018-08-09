@@ -5,8 +5,8 @@ class Cursor extends React.Component {
   render() {
     return (
       <Circle 
-        x={this.props.currPos.x * this.props.windowSize}
-        y={this.props.currPos.y * this.props.windowSize}
+        x={this.props.currPos.x * this.props.windowScale}
+        y={this.props.currPos.y * this.props.windowScale}
         radius={this.props.radius}
         fill='yellow'
       />

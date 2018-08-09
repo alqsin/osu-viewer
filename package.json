@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "konva": "^2.1.8",
+    "lzma": "^2.3.2",
     "osureplayparser": "^1.0.1",
     "rc-slider": "^8.6.1",
     "react": "^16.4.2",
