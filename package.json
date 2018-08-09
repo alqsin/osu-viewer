@@ -1,0 +1,21 @@
+{
+  "name": "osu-viewer",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "konva": "^2.1.8",
+    "osureplayparser": "^1.0.1",
+    "rc-slider": "^8.6.1",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "react-konva": "^1.7.12",
+    "react-scripts": "1.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "homepage": "http://alexl.in/osu-viewer-test"
+}
