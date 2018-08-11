@@ -9,7 +9,7 @@ class TimeSlider extends React.PureComponent {
     return (
       <Slider
         min={0}
-        max={totalTime * 1000}
+        max={Math.ceil(totalTime * 10) * 100} // makes it so max-min % step = 0
         step={100}
         onChange={onChange}
         value={value}

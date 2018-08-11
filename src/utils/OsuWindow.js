@@ -1,6 +1,7 @@
 import React from 'react';
 import {Stage,Layer,Rect} from 'react-konva';
 import Cursor from './Cursor.js'
+import MapObjects from './MapObjects.js'
 
 class OsuWindow extends React.Component {
   state = {
@@ -29,11 +30,19 @@ class OsuWindow extends React.Component {
       <Stage width={this.state.windowScale * 512} height={this.state.windowScale * 384}>
         <Layer>
           <Rect width={this.state.windowScale * 512} height={this.state.windowScale * 384} fill='black' opacity={0.3} />
-           <Cursor
-              currPos={this.props.currCursorPos}
-              windowScale={this.state.windowScale}
-              radius={this.state.windowScale * 10}
-            />
+        </Layer>
+        <Layer>
+          <MapObjects 
+            currTime={this.props.currTime}
+            windowScale={this.state.windowScale}
+          />
+        </Layer>
+        <Layer>
+          <Cursor
+            currPos={this.props.currCursorPos}
+            windowScale={this.state.windowScale}
+            radius={this.state.windowScale * 10}
+          />
         </Layer>
       </Stage>
     );

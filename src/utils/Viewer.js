@@ -4,6 +4,8 @@ import TimeKeeper from './TimeKeeper.js';
 import TimeSlider from './TimeSlider.js';
 import OsuWindow from './OsuWindow.js';
 
+// TODO: separate static rectangle into a different layer
+
 class Viewer extends React.Component {
   render() {
     const currCursorStatus = new CursorStatus();
@@ -21,6 +23,7 @@ class Viewer extends React.Component {
             />
             <OsuWindow
               currCursorPos={currCursorPos}
+              currTime={currTime}
             />
           </div>
         }
