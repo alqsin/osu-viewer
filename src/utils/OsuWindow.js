@@ -31,12 +31,10 @@ class OsuWindow extends React.Component {
         <Layer>
           <Rect width={this.state.windowScale * 512} height={this.state.windowScale * 384} fill='black' opacity={0.3} />
         </Layer>
-        <Layer>
-          <MapObjects 
-            currTime={this.props.currTime}
-            windowScale={this.state.windowScale}
-          />
-        </Layer>
+        <MapObjects 
+          currTime={this.props.currTime}
+          windowScale={this.state.windowScale}
+        />
         <Layer>
           <Cursor
             currPos={this.props.currCursorPos}
@@ -45,7 +43,7 @@ class OsuWindow extends React.Component {
           />
         </Layer>
       </Stage>
-    );
+    )
   }
 
 }

@@ -1,18 +1,27 @@
 import React from 'react';
-import { Group } from 'react-konva';
+import { Layer } from 'react-konva';
 import OsuCircle from './OsuCircle.js'
+import OsuSlider from './OsuSlider.js'
+import OsuSpinner from './OsuSpinner.js'
 
 import mapData from './beatmaps/imagematerial.json'
 
-function collectCircles(currMapData) {
+function collectObjects(currMapData) {
   const hitObjCount = currMapData.hitObjects.length;
   var circleArray = [];
+  var sliderArray = [];
+  var spinnerArray = [];
   for (let i=0;i<hitObjCount;i++) {
     if (currMapData.hitObjects[i].objectName === 'circle') {
       circleArray.push(currMapData.hitObjects[i]);
+    } else if (currMapData.hitObjects[i].objectName === 'slider') {
+      sliderArray.push(currMapData.hitObjects[i]);
+    } else if (currMapData.hitObjects[i].objectName === 'spinner') {
+      spinnerArray.push(currMapData.hitObjects[i]);
     }
+
   }
-  return circleArray;
+  return {circles: circleArray, sliders: sliderArray, spinners: spinnerArray};
 }
 
 function getMapSettings(currMapData) {
@@ -26,22 +35,70 @@ function getMapSettings(currMapData) {
 class MapObjects extends React.Component {
   state = {
     circles: null,
+    sliders: null,
+    spinners: null,
     mapSettings: null,
   }
 
+  // componentWillMount() {
+  //   this.setState({
+  //     // test importing mapData here instead of globally
+  //     circles: collectCircles(mapData),
+  //     sliders: collectSliders(mapData),
+  //     mapSettings: getMapSettings(mapData),
+  //   })
+  // }
+
   componentWillMount() {
+    // test importing mapData here instead of globally
     this.setState({
-      circles: collectCircles(mapData),
       mapSettings: getMapSettings(mapData),
     })
+    this.setState(collectObjects(mapData))
   }
 
   render() {
     return (
-      <Group>
+      <Layer>
+        {this.state.spinners.map(({
+          startTime,
+          endTime,
+        }) => (
+          <OsuSpinner
+            key={startTime}
+            startTime={startTime}
+            endTime={endTime}
+            currTime={this.props.currTime}
+            windowScale={this.props.windowScale}
+          />
+        ))}
+        {this.state.sliders.map(({
+          points,
+          curveType,
+          startTime,
+          endTime,
+          repeatCount,
+          newCombo,
+        }) => (
+          <OsuSlider
+            key={startTime}
+            points={[].concat.apply([], points)}
+            curveType={curveType}
+            startTime={startTime}
+            endTime={endTime}
+            currTime={this.props.currTime}
+            windowScale={this.props.windowScale}
+            circleSize={this.state.mapSettings.circleSize}
+            approachRate={this.state.mapSettings.approachRate}
+            overallDifficulty={this.state.mapSettings.overallDifficulty}
+            newCombo={newCombo}
+            repeatCount={repeatCount}
+          />
+        ))}
         {this.state.circles.map(({
           position,
           startTime,
+          newCombo,
         }) => (
           <OsuCircle
             key={startTime}
@@ -53,9 +110,10 @@ class MapObjects extends React.Component {
             circleSize={this.state.mapSettings.circleSize}
             approachRate={this.state.mapSettings.approachRate}
             overallDifficulty={this.state.mapSettings.overallDifficulty}
+            newCombo={newCombo}
           />
         ))}
-      </Group>
+      </Layer>
     )
   }
 
