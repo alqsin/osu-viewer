@@ -1,1 +1,17 @@
-there are some sliders that "go back" and look funny as a result - I think sliders are supposed to be made by moving a circle over a path
+SOON
+add slider repeat indicator
+add slider hitbox
+sync end time for replay file and map
+fix how sliders render (jagged + square ended)
+allow beatmap to be paused
+add combo colors and numbers
+add slider/circle borders
+create better spinner graphics?
+
+EVENTUALLY
+add hit registration + score calculation
+add key tracker
+add actual graphics
+add music + volume control
+create backend which fetches replay/map data, create replay selection/loading page
+restucture project - get rid of create-react-app default files
