@@ -4,42 +4,21 @@ import Cursor from './Cursor.js'
 import MapObjects from './MapObjects.js'
 
 class OsuWindow extends React.Component {
-  state = {
-    windowScale: 0,
-  }
-  updatewindowScale = () => {
-    this.setState(() => {
-      if (window.innerHeight * 512 >= window.innerWidth * 384) {
-        return ({ windowScale: window.innerWidth / 512})
-      }
-      if (window.innerHeight * 512 < window.innerWidth * 384) {
-        return ({ windowScale: window.innerHeight / 384})
-      }
-    })
-  }
-  componentDidMount() {
-    window.addEventListener('resize', this.updatewindowScale.bind(this))
-    this.updatewindowScale()
-  }
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.updatewindowScale.bind(this))
-  }
-
   render(){
     return (
-      <Stage width={this.state.windowScale * 512} height={this.state.windowScale * 384}>
+      <Stage width={this.props.windowScale * 512} height={this.props.windowScale * 384}>
         <Layer>
-          <Rect width={this.state.windowScale * 512} height={this.state.windowScale * 384} fill='black' opacity={0.3} />
+          <Rect width={this.props.windowScale * 512} height={this.props.windowScale * 384} fill='black' opacity={0.3} />
         </Layer>
         <MapObjects 
           currTime={this.props.currTime}
-          windowScale={this.state.windowScale}
+          windowScale={this.props.windowScale}
         />
         <Layer>
           <Cursor
             currPos={this.props.currCursorPos}
-            windowScale={this.state.windowScale}
-            radius={this.state.windowScale * 10}
+            windowScale={this.props.windowScale}
+            radius={this.props.windowScale * 10}
           />
         </Layer>
       </Stage>
