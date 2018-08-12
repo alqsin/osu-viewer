@@ -40,15 +40,6 @@ class MapObjects extends React.Component {
     mapSettings: null,
   }
 
-  // componentWillMount() {
-  //   this.setState({
-  //     // test importing mapData here instead of globally
-  //     circles: collectCircles(mapData),
-  //     sliders: collectSliders(mapData),
-  //     mapSettings: getMapSettings(mapData),
-  //   })
-  // }
-
   componentWillMount() {
     // test importing mapData here instead of globally
     this.setState({
