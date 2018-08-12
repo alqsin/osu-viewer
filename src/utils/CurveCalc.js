@@ -71,7 +71,6 @@ function recursiveBezierApprox(points) {
   var r = []
 
   const recursedPoints = recurseSingleBezier(points);
-  console.log(recursedPoints)
 
   // fill l
   l.push(points[0])
@@ -88,9 +87,6 @@ function recursiveBezierApprox(points) {
   }
   r.push(points[points.length - 2])
   r.push(points[points.length - 1])
-
-  console.log("l = " + l)
-  console.log("r = " + r)
 
   return recursiveBezierApprox(l).concat(recursiveBezierApprox(r))
 }
