@@ -3,21 +3,22 @@ import { Layer } from 'react-konva';
 import OsuCircle from './OsuCircle.js'
 import OsuSlider from './OsuSlider.js'
 import OsuSpinner from './OsuSpinner.js'
+import CalculateMapScore from './CalculateMapScore.js'
 
 import mapData from './beatmaps/imagematerial.json'
 
-function collectObjects(currMapData) {
-  const hitObjCount = currMapData.hitObjects.length;
+function collectObjects(hitObjects) {
+  const hitObjCount = hitObjects.length;
   var circleArray = [];
   var sliderArray = [];
   var spinnerArray = [];
   for (let i=0;i<hitObjCount;i++) {
-    if (currMapData.hitObjects[i].objectName === 'circle') {
-      circleArray.push(currMapData.hitObjects[i]);
-    } else if (currMapData.hitObjects[i].objectName === 'slider') {
-      sliderArray.push(currMapData.hitObjects[i]);
-    } else if (currMapData.hitObjects[i].objectName === 'spinner') {
-      spinnerArray.push(currMapData.hitObjects[i]);
+    if (hitObjects[i].objectName === 'circle') {
+      circleArray.push(hitObjects[i]);
+    } else if (hitObjects[i].objectName === 'slider') {
+      sliderArray.push(hitObjects[i]);
+    } else if (hitObjects[i].objectName === 'spinner') {
+      spinnerArray.push(hitObjects[i]);
     }
 
   }
@@ -42,13 +43,20 @@ class MapObjects extends React.Component {
 
   componentWillMount() {
     // test importing mapData here instead of globally
+    const mapSettings = getMapSettings(mapData);
     this.setState({
-      mapSettings: getMapSettings(mapData),
+      mapSettings: mapSettings,
     })
-    this.setState(collectObjects(mapData))
+    this.setState(collectObjects(CalculateMapScore.assignObjectHits(
+      mapData.hitObjects,
+      this.props.replayData,
+      mapSettings.circleSize,
+      mapSettings.overallDifficulty,
+    )));
   }
 
   render() {
+    let i = 0;
     return (
       <Layer>
         {this.state.spinners.map(({
@@ -56,7 +64,7 @@ class MapObjects extends React.Component {
           endTime,
         }) => (
           <OsuSpinner
-            key={startTime}
+            key={++i}
             startTime={startTime}
             endTime={endTime}
             currTime={this.props.currTime}
@@ -72,7 +80,7 @@ class MapObjects extends React.Component {
           newCombo,
         }) => (
           <OsuSlider
-            key={startTime}
+            key={++i}
             points={[].concat.apply([], points)}
             curveType={curveType}
             startTime={startTime}
@@ -90,22 +98,27 @@ class MapObjects extends React.Component {
           position,
           startTime,
           newCombo,
+          objectScore,
+          objectHitAt,
         }) => (
           <OsuCircle
-            key={startTime}
+            key={++i}
             x={position[0]}
             y={position[1]}
-            hitTime={startTime}
+            startTime={startTime}
             currTime={this.props.currTime}
             windowScale={this.props.windowScale}
             circleSize={this.state.mapSettings.circleSize}
             approachRate={this.state.mapSettings.approachRate}
             overallDifficulty={this.state.mapSettings.overallDifficulty}
             newCombo={newCombo}
+            objectScore={objectScore}
+            objectHitAt={objectHitAt}
           />
         ))}
       </Layer>
     )
+    
   }
 
 }

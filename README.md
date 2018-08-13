@@ -5,7 +5,10 @@ Extremely in-progress. Will eventually allow for the viewing of replays in a web
 Runs on
 -----
 React  
-Boostrapped with create-react-app
+react-konva (for drawing Canvas elements)  
+osu-parser (for beatmap parsing)  
+osureplayparser (for replay parsing)  
+Boostrapped with create-react-app  
 
 Usage
 -----

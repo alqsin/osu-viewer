@@ -15,7 +15,7 @@ class TimeKeeper extends React.Component {
     this.lastUpdate = time
 
     this.setState(({currTime, timeSpeed}) => {
-        if (Math.floor(currTime / 1000) >= this.props.totalTime){
+        if (Math.floor(currTime / 100) >= this.props.totalTime * 10){
           cancelAnimationFrame(this.newFrame)
           return
         }

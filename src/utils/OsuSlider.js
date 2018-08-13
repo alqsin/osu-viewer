@@ -21,6 +21,9 @@ class OsuSlider extends React.Component {
     sliderWidth: 0,
     linearizedPoints: null,
   }
+  shouldComponentUpdate() {
+    return this.props.currTime >= this.state.fadeInStart && this.props.currTime <= this.state.sliderEnd;
+  }
   componentDidMount() {
     this.setState({
       fadeInStart: this.props.startTime - HitObjectCalc.getPreTime(this.props.approachRate),
@@ -43,7 +46,7 @@ class OsuSlider extends React.Component {
     } else throw new Error("Invalid slider???")
   }
   render() {
-    if (this.props.currTime <= 0 || this.props.currTime < this.state.fadeInStart || this.props.currTime > this.state.sliderEnd) return null;
+    if (this.props.currTime < this.state.fadeInStart || this.props.currTime > this.state.sliderEnd || this.props.currTime <= 0) return null;
     const opacity = HitObjectCalc.getOpacity(this.props.currTime,this.state.fadeInStart,this.state.fadeInEnd);
     return (
       <Group>

@@ -7,6 +7,9 @@ allow beatmap to be paused
 add combo colors and numbers
 add slider/circle borders
 create better spinner graphics?
+determine proper approach circle radius and sacle width by windowSize
+fix keys so they're uniquely tabulated
+optimize rendering
 
 EVENTUALLY
 add hit registration + score calculation

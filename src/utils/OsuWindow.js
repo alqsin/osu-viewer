@@ -13,6 +13,7 @@ class OsuWindow extends React.Component {
         <MapObjects 
           currTime={this.props.currTime}
           windowScale={this.props.windowScale}
+          replayData={this.props.replayData}
         />
         <Layer>
           <Cursor

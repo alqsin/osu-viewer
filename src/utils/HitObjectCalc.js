@@ -13,6 +13,12 @@ class HitObjectCalc {
   static getHitWindow(overallDifficulty) {
     return 150 + 50 * (5 - overallDifficulty) / 5;
   }
+  static get100Window(overallDifficulty) {
+    return 100 + 40 * (5 - overallDifficulty) / 5;
+  }
+  static get300Window(overallDifficulty) {
+    return 50 + 30 * (5 - overallDifficulty) / 5;
+  }
   static getCircleRadius(circleSize) {
     return (54.4 - 4.48 * circleSize) / 2;
   }

@@ -15,6 +15,9 @@ for (let i=0;i<replay_data_len;i++){
   replay.replay_data[i].totalTime = total_time;
 }
 
+console.log("Removing last two replay frames due to some issue with parser.")
+replay.replay_data.splice(replay.replay_data.length - 2,2)
+
 fs.writeFile("./imagematerial.json",JSON.stringify(replay.replay_data, null, 4), (err) => {
   if (err) {
     console.error(err);

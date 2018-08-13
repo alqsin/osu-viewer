@@ -31,7 +31,7 @@ class Viewer extends React.Component {
 
   render() {
     const currCursorStatus = new CursorStatus();
-    const totalReplayLength = currCursorStatus.getReplayLength() / 1000;
+    const totalReplayLength = 1.0 * currCursorStatus.getReplayLength() / 1000;
     return (
       <TimeKeeper
         totalTime = {totalReplayLength}
@@ -48,6 +48,7 @@ class Viewer extends React.Component {
               currCursorPos={currCursorPos}
               currTime={currTime}
               windowScale={this.state.windowScale}
+              replayData={currCursorStatus.getReplayData()}
             />
           </div>
         }

@@ -1,28 +1,32 @@
 import React from 'react';
 import replayData from './replays/imagematerial.json'
 
-const binarySearchLower = (d, t, s, e, len) => {
+const binarySearchLower = (d, t, s, e) => {
   const m = Math.floor((s + e)/2);
-  if (t >= d[m].totalTime && t <= d[Math.min(m+1,len-1)].totalTime) return d[m];
+  if (t >= d[m].totalTime && t <= d[m+1].totalTime) return d[m];
   if (e - 1 === s) return d[s];
-  if (t > d[m].totalTime) return binarySearchLower(d,t,m,e,len);
-  if (t < d[m].totalTime) return binarySearchLower(d,t,s,m,len);
-  return null;
+  if (t > d[m].totalTime) return binarySearchLower(d,t,m,e);
+  return binarySearchLower(d,t,s,m);
 }
 
 function calculatePos(currTime,currReplayData) {
   const replayDataLength = replayData.length;
 
-  let currPoint = binarySearchLower(currReplayData,currTime,0,replayDataLength-1,replayDataLength)
+  let currPoint = binarySearchLower(currReplayData,currTime,0,replayDataLength-1)
 
   if (currPoint == null) return {x: 256, y: 192};
   
   return currPoint
 }
 
+// note that totalTime is summed by the node.js script
 class CursorStatus extends React.Component {
   state = {
     replayAnalyzed: false,
+  }
+
+  getReplayData = () => {
+    return replayData;
   }
 
   getReplayLength = () => {
