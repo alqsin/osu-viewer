@@ -15,10 +15,10 @@ class Viewer extends React.Component {
     const requiredBufferX = 0;
 
     this.setState(() => {
-      if ((window.innerHeight - requiredBufferY) * 512 >= (window.innerWidth - requiredBufferX) * 384) {
-        return ({ windowScale: (window.innerWidth - requiredBufferX) / 512})
+      if ((window.innerHeight - requiredBufferY) * 640 >= (window.innerWidth - requiredBufferX) * 480) {
+        return ({ windowScale: (window.innerWidth - requiredBufferX) / 640})
       }
-      return ({ windowScale: (window.innerHeight - requiredBufferY) / 384})
+      return ({ windowScale: (window.innerHeight - requiredBufferY) / 480})
     })
   }
   componentDidMount() {

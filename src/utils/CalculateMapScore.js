@@ -1,22 +1,34 @@
 import HitObjectCalc from './HitObjectCalc.js';
 import CurveCalc from './CurveCalc.js';
 
+function checkNewKeyPress(keyPressedBefore,keyPressedNow) {
+  // for now, let's just ignore k1 and k2, and smokes
+  const beforem1 = keyPressedBefore % 2;
+  const beforem2 = Math.floor(keyPressedBefore % 4 / 2);
+  const nowm1 = keyPressedNow % 2;
+  const nowm2 = Math.floor(keyPressedNow % 4 / 2);
+
+  if (nowm1 && !beforem1) return true;
+  if (nowm2 && !beforem2) return true;
+
+  return false;
+}
+
 function checkCursorInRadius(cursorX, cursorY, objectX, objectY, objectRadius) {
   const cursorObjectDist = Math.sqrt(Math.pow(objectX - cursorX,2) + Math.pow(objectY - cursorY,2));
   return cursorObjectDist <= objectRadius;
 }
 
-// this binary search finds the index of the first instance of a cursor action after s
+// this binary search finds the index of the first instance of a cursor action after t
 const binarySearchMinIndex = (d, t, s, e) => {
   const m = Math.floor((s + e)/2);
-  if (t <= d[m].totalTime && t >= d[m-1].totalTime) return m;
+  if (t <= d[m].totalTime && t > d[m-1].totalTime) return m;
   if (e - 1 === s) return e;
   if (t > d[m].totalTime) return binarySearchMinIndex(d,t,m,e);
   return binarySearchMinIndex(d,t,s,m);
 }
 
-// TODO: pass previous index to binary search start
-function calculateCircleScore(circle, replayData, circleSize, overallDifficulty,prevHitTime) {
+function calculateCircleScore(circle, replayData, circleSize, overallDifficulty, prevHitTime) {
   // looks through replayData and determines whether or not circle was hit, returning an array containing score and time of hit
   // if object is never hit, just send circle fade out time as time of hit
   const window50 = HitObjectCalc.getHitWindow(overallDifficulty);
@@ -24,13 +36,10 @@ function calculateCircleScore(circle, replayData, circleSize, overallDifficulty,
   const window300 = HitObjectCalc.get300Window(overallDifficulty);
   const circleRadius = HitObjectCalc.getCircleRadius(circleSize);
   let searchStartTime = circle.startTime - window50;
-  if (prevHitTime > searchStartTime) searchStartTime = prevHitTime;
+  if (prevHitTime + 1 > searchStartTime) searchStartTime = prevHitTime + 1;
   const indStart = binarySearchMinIndex(replayData,searchStartTime,1,replayData.length-1); // use the fact that nothing happens at time 0 of replay
-  if (indStart === -1) {
-    return [0,circle.startTime + window50];
-  }
-  for (let i=indStart;replayData[i].totalTime<circle.startTime + window50;i++){
-    if ((replayData[i].keysPressed.K1 && !replayData[i-1].keysPressed.K1) || (replayData[i].keysPressed.K2 && ! replayData[i-1].keysPressed.K2)){
+  for (let i=indStart;replayData[i].totalTime<=circle.startTime + window50;i++){
+    if (checkNewKeyPress(replayData[i-1].keyPressedBitwise,replayData[i].keyPressedBitwise)){
       if (checkCursorInRadius(replayData[i].x,replayData[i].y,circle.position[0],circle.position[1],circleRadius)) {
         const hitDelta = Math.abs(replayData[i].totalTime - circle.startTime);
         if (hitDelta <= window300) return [300,replayData[i].totalTime];

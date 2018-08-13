@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layer } from 'react-konva';
+import { Group } from 'react-konva';
 import OsuCircle from './OsuCircle.js'
 import OsuSlider from './OsuSlider.js'
 import OsuSpinner from './OsuSpinner.js'
@@ -58,7 +58,7 @@ class MapObjects extends React.Component {
   render() {
     let i = 0;
     return (
-      <Layer>
+      <Group>
         {this.state.spinners.map(({
           startTime,
           endTime,
@@ -116,7 +116,7 @@ class MapObjects extends React.Component {
             objectHitAt={objectHitAt}
           />
         ))}
-      </Layer>
+      </Group>
     )
     
   }

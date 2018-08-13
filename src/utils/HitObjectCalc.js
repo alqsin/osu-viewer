@@ -20,7 +20,7 @@ class HitObjectCalc {
     return 50 + 30 * (5 - overallDifficulty) / 5;
   }
   static getCircleRadius(circleSize) {
-    return (54.4 - 4.48 * circleSize) / 2;
+    return 54.4 - 4.48 * circleSize;
   }
   static getOpacity(currTime,fadeInStart,fadeInEnd) {
     if (currTime >= fadeInEnd) return 1;

@@ -15,10 +15,10 @@ class TimeSlider extends React.PureComponent {
   render() {
     const headerDivStyle = {
       height: 16,
-      width: this.props.windowScale * 512,
+      width: this.props.windowScale * 640,
     }
     const sliderDivStyle = {
-      width: this.props.windowScale * 512 - 50,
+      width: this.props.windowScale * 640 - 50,
       height: 16,
       float: 'left',
     }
