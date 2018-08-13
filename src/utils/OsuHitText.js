@@ -10,9 +10,12 @@ class OsuHitText extends React.Component {
           x={this.props.x * this.props.windowScale}
           y={this.props.y * this.props.windowScale}
           text='X'
-          fontSize={30 * this.props.windowScale}
+          fontSize={35 * this.props.windowScale}
           fill='red'
           width={40 * this.props.windowScale}
+          height={40 * this.props.windowScale}
+          offsetX={20 * this.props.windowScale}
+          offsetY={20 * this.props.windowScale}
           align='center'
         />
       )
@@ -22,9 +25,12 @@ class OsuHitText extends React.Component {
         x={this.props.x * this.props.windowScale}
         y={this.props.y * this.props.windowScale}
         text={this.props.objectScore}
-        fontSize={16 * this.props.windowScale}
+        fontSize={20 * this.props.windowScale}
         fill='black'
-        width={55 * this.props.windowScale}
+        width={50 * this.props.windowScale}
+        height={20 * this.props.windowScale}
+        offsetX={25 * this.props.windowScale}
+        offsetY={10 * this.props.windowScale}
         align='center'
       />
     )

@@ -23,8 +23,9 @@ class HitObjectCalc {
     return 54.4 - 4.48 * circleSize;
   }
   static getOpacity(currTime,fadeInStart,fadeInEnd) {
-    if (currTime >= fadeInEnd) return 1;
-    return 1 - 1.0 * (fadeInEnd - currTime) / (fadeInEnd - fadeInStart);
+    const maxOpacity = 0.7;
+    if (currTime >= fadeInEnd) return maxOpacity;
+    return maxOpacity * (1 - 1.0 * (fadeInEnd - currTime) / (fadeInEnd - fadeInStart));
   }
 }
 

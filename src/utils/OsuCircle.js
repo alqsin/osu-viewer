@@ -11,7 +11,7 @@ class OsuCircle extends React.Component {
     fadeInEnd: 0,
     noteEnd: 0,
     circleRadius: 0,
-    hitDisplayTime: 250,
+    hitDisplayTime: 350,
   }
   shouldComponentUpdate() {
     return this.props.currTime >= this.state.fadeInStart && this.props.currTime <= this.props.objectHitAt + this.state.hitDisplayTime;
