@@ -1,6 +1,7 @@
 osu-viewer
 =====
-Extremely in-progress. Will eventually allow for the viewing of replays in a web browser.
+Extremely in-progress. Will eventually allow for the viewing of replays in a web browser.  
+See a demo of the most recent working version [here.](http://alexl.in/osu-viewer-test)  
 
 Runs on
 -----
@@ -12,7 +13,8 @@ Boostrapped with create-react-app
 
 Usage
 -----
-It doesn't really do anything right now. But run `npm run build` to build.
+`npm install` should get dependencies.  
+`npm run build` to build or `npm start` to run locally.  
 
 License
 -----
