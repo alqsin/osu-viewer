@@ -51,6 +51,10 @@ function calculateCircleScore(circle, replayData, circleSize, overallDifficulty,
   return [0,circle.startTime + window50];
 }
 
+function calculateSliderScore(slider, replayData, timingPoints, circleSize, overallDifficulty, prevHitTime, sliderMultiplier) {
+  // determines the score of slider (0, 50, 100, 300) and assigns it an array containing the combo at each point of the slider
+}
+
 class CalculateMapScore {
   static assignObjectHits(hitObjects, replayData, circleSize, overallDifficulty) {
     let currHitTime = 0;
