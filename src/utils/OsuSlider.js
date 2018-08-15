@@ -1,6 +1,5 @@
 import React from 'react';
-import {Line, Group} from 'react-konva';
-import CurveCalc from './CurveCalc.js'
+import {Line, Rect, Group} from 'react-konva';
 import OsuApproachCircle from './OsuApproachCircle.js'
 import HitObjectCalc from './HitObjectCalc.js'
 
@@ -13,7 +12,7 @@ function scalePoints(points,windowScale){
 }
 
 class OsuSlider extends React.Component {
-  // props are points, curveType, repeatCount, newCombo, startTime, endTime, currTime, windowScale, circleSize, approachRate, overallDifficulty
+  // props are linearizedPoints, ticks, curveType, repeatCount, newCombo, startTime, endTime, currTime, windowScale, circleSize, approachRate, overallDifficulty
   state = {
     fadeInStart: 0,
     fadeInEnd: 0,
@@ -31,28 +30,18 @@ class OsuSlider extends React.Component {
       sliderEnd: this.props.endTime + HitObjectCalc.getHitWindow(this.props.overallDifficulty),
       sliderWidth: HitObjectCalc.getCircleRadius(this.props.circleSize) * 2,
     })
-    if (this.props.curveType === "linear") {
-      this.setState({
-        linearizedPoints: this.props.points,
-      })
-    } else if (this.props.curveType === "bezier" || this.props.points.length > 6) {
-      this.setState({
-        linearizedPoints: CurveCalc.linearizeBezier(this.props.points),
-      })
-    } else if (this.props.curveType === "pass-through" && this.props.points.length === 6) {
-      this.setState({
-        linearizedPoints: CurveCalc.linearizeArc(this.props.points),
-      })
-    } else throw new Error("Invalid slider???")
   }
   render() {
     if (this.props.currTime < this.state.fadeInStart || this.props.currTime > this.state.sliderEnd || this.props.currTime <= 0) return null;
     const opacity = HitObjectCalc.getOpacity(this.props.currTime,this.state.fadeInStart,this.state.fadeInEnd);
+    let sliderColor='green';
+    if (this.props.curveType === 'pass-through') sliderColor = 'red';
+    let i=0;
     return (
       <Group>
         <OsuApproachCircle
-          x={this.props.points[0]}
-          y={this.props.points[1]}
+          x={this.props.linearizedPoints[0]}
+          y={this.props.linearizedPoints[1]}
           currTime={this.props.currTime}
           hitTime={this.props.startTime}
           fadeInStart={this.state.fadeInStart}
@@ -61,12 +50,25 @@ class OsuSlider extends React.Component {
           opacity={opacity}
         />
         <Line
-          points={scalePoints(this.state.linearizedPoints,this.props.windowScale)}
+          points={scalePoints(this.props.linearizedPoints,this.props.windowScale)}
           strokeWidth={this.state.sliderWidth * this.props.windowScale}
-          stroke='green'
+          stroke={sliderColor}
           lineCap='round'
           opacity={opacity}
         />
+        {this.props.ticks.map(x =>
+          <Rect
+            key={++i}
+            x={x[0] * this.props.windowScale}
+            y={x[1] * this.props.windowScale}
+            width={5 * this.props.windowScale}
+            height={5 * this.props.windowScale}
+            offsetX={2.5 * this.props.windowScale}
+            offsetY={2.5 * this.props.windowScale}
+            fill='black'
+            opacity={0.6}
+          />
+        )}
       </Group>
     )
   }

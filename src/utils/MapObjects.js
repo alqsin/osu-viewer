@@ -4,10 +4,12 @@ import OsuCircle from './OsuCircle.js'
 import OsuSlider from './OsuSlider.js'
 import OsuSpinner from './OsuSpinner.js'
 import CalculateMapScore from './CalculateMapScore.js'
+import CurveCalc from './CurveCalc.js'
 
 import mapData from './beatmaps/imagematerial.json'
 
 function collectObjects(hitObjects) {
+  // go through hitObjects and collect each type of object into
   const hitObjCount = hitObjects.length;
   var circleArray = [];
   var sliderArray = [];
@@ -19,18 +21,45 @@ function collectObjects(hitObjects) {
       sliderArray.push(hitObjects[i]);
     } else if (hitObjects[i].objectName === 'spinner') {
       spinnerArray.push(hitObjects[i]);
-    }
+    } else console.log("Unknown type of hitObject: " + hitObjects[i].objectName)
 
   }
   return {circles: circleArray, sliders: sliderArray, spinners: spinnerArray};
 }
 
 function getMapSettings(currMapData) {
+  // gets the important map settings from the map data
   var mapSettings = {}
   mapSettings.circleSize = currMapData.CircleSize;
   mapSettings.overallDifficulty = currMapData.OverallDifficulty;
   mapSettings.approachRate = currMapData.ApproachRate;
   return mapSettings;
+}
+
+// maybe move this function to CurveCalc since it does a lot of calculations
+function addLinearizedPoints(currMapData) {
+  // creates linearization for every slider
+  for (let i=0;i<currMapData.hitObjects.length;i++){
+    // only do this for sliders
+    if (currMapData.hitObjects[i].objectName !== 'slider') continue;
+
+    // flatten current object points
+    currMapData.hitObjects[i].points = [].concat.apply([], currMapData.hitObjects[i].points)
+
+    // for each type of slider, use a different process
+    if (currMapData.hitObjects[i].curveType === "linear") {
+      currMapData.hitObjects[i].linearizedPoints = CurveCalc.linearCorrectPathLength(currMapData.hitObjects[i].points, currMapData.hitObjects[i].pixelLength)
+    } else if (currMapData.hitObjects[i].curveType === "bezier" || currMapData.hitObjects[i].points.length > 6) {
+      currMapData.hitObjects[i].linearizedPoints = CurveCalc.linearizeBezier(currMapData.hitObjects[i].points, currMapData.hitObjects[i].pixelLength)
+    } else if (currMapData.hitObjects[i].curveType === "pass-through" && currMapData.hitObjects[i].points.length === 6) {
+        currMapData.hitObjects[i].linearizedPoints = CurveCalc.linearizeArc(currMapData.hitObjects[i].points, currMapData.hitObjects[i].pixelLength)
+    } else throw new Error("Invalid slider???");
+
+    // also want to add ticks for each slider
+    // first get timing point, then add ticks using its properties
+    const timingPoint = CurveCalc.getSliderTimingPoint(currMapData.hitObjects[i].startTime,currMapData.timingPoints);
+    currMapData.hitObjects[i].ticks = CurveCalc.getSliderTicks(currMapData.hitObjects[i], currMapData.SliderMultiplier, timingPoint.beatLength, timingPoint.velocity);
+  } 
 }
 
 class MapObjects extends React.Component {
@@ -47,6 +76,11 @@ class MapObjects extends React.Component {
     this.setState({
       mapSettings: mapSettings,
     })
+
+    // try to add linearized slider points in place
+    addLinearizedPoints(mapData)
+
+    // get circles sliders and spinners after assigning object hits/scores
     this.setState(collectObjects(CalculateMapScore.assignObjectHits(
       mapData.hitObjects,
       this.props.replayData,
@@ -78,10 +112,13 @@ class MapObjects extends React.Component {
           endTime,
           repeatCount,
           newCombo,
+          linearizedPoints,
+          ticks,
         }) => (
           <OsuSlider
             key={++i}
-            points={[].concat.apply([], points)}
+            linearizedPoints={linearizedPoints}
+            ticks={ticks}
             curveType={curveType}
             startTime={startTime}
             endTime={endTime}
