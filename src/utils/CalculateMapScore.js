@@ -173,18 +173,25 @@ function getSliderComboAndScore(slider, currCombo, totalScore) {
   sliderScore.push(totalScore);
 
   // I honestly have no idea what the criteria for slider score is, just winging it
+  let sliderHitScore = 0;
   if (!endMissed && !tickMissed && slider.wasHit) {
-    totalScore += getHitScore(300, currCombo);
+    sliderHitScore = 300;
   }
   else if (!endMissed && !tickMissed) {
-    totalScore += getHitScore(100, currCombo);
+    sliderHitScore = 100;
   }
   else if (slider.wasHit && (!endMissed || !tickMissed)) {
-    totalScore += getHitScore(100, currCombo);
+    sliderHitScore = 100;
   }
   else if (slider.wasHit || !endMissed || !tickMissed) {
-    totalScore += getHitScore(50, currCombo);
+    sliderHitScore = 50;
   }
+  else sliderHitScore = 0;
+
+  // WARNING: this modifies slider directly to provide the objectScore
+  slider.objectScore = sliderHitScore;
+
+  totalScore += getHitScore(sliderHitScore, currCombo);
   sliderCombo.push(currCombo);
   sliderScore.push(totalScore);
 

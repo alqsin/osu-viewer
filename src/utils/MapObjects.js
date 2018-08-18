@@ -115,6 +115,7 @@ class MapObjects extends React.Component {
         {this.state.spinners.map(({
           startTime,
           endTime,
+          objectScore,
         }) => (
           <OsuSpinner
             key={++i}
@@ -122,6 +123,7 @@ class MapObjects extends React.Component {
             endTime={endTime}
             currTime={this.props.currTime}
             windowScale={this.props.windowScale}
+            objectScore={objectScore}
           />
         ))}
         {this.state.sliders.map(({
@@ -133,6 +135,8 @@ class MapObjects extends React.Component {
           newCombo,
           linearizedPoints,
           ticks,
+          objectScore,
+          objectHitAt,
         }) => (
           <OsuSlider
             key={++i}
@@ -148,6 +152,7 @@ class MapObjects extends React.Component {
             overallDifficulty={this.state.mapSettings.overallDifficulty}
             newCombo={newCombo}
             repeatCount={repeatCount}
+            objectScore={objectScore}
           />
         ))}
         {this.state.circles.map(({
