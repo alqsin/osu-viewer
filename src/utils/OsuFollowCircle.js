@@ -14,34 +14,50 @@ function dist(x1, y1, x2, y2) {
   return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 }
 
-function findCurrentPosition(timeSinceStart, linearizedPoints, msVelocity, integratedLength) {
-  const currLength = msVelocity * timeSinceStart;
+function findCurrentPosition(timeSinceStart, points, msVelocity, integratedLength) {
+  const doubledSliderLength = integratedLength[integratedLength.length - 1];
+  const currLength = msVelocity * timeSinceStart % doubledSliderLength;
   const lengthInd = binarySearchLower(integratedLength, currLength, 0, integratedLength.length - 1);
   const lengthDiff = currLength - integratedLength[lengthInd];
 
-  return interpolate(linearizedPoints[lengthInd*2],linearizedPoints[lengthInd*2+1],linearizedPoints[lengthInd*2+2],linearizedPoints[lengthInd*2+3],lengthDiff);
+  return interpolate(points[lengthInd*2],points[lengthInd*2+1],points[lengthInd*2+2],points[lengthInd*2+3],lengthDiff);
 }
 
-function sumPointsLength(linearizedPoints) {
+function reverseByTwo(points) {
+  var newPoints = [];
+  for (let i=points.length-2;i>=0;i-=2) {
+    newPoints.push(points[i]);
+    newPoints.push(points[i+1]);
+  }
+  return newPoints;
+}
+
+function sumPointsLength(points) {
   var integratedLength = [0];
   let currLength = 0;
-  for (let i=0;i<linearizedPoints.length-2;i+=2) {
-    currLength += dist(linearizedPoints[i],linearizedPoints[i+1],linearizedPoints[i+2],linearizedPoints[i+3]);
+  for (let i=0;i<points.length-2;i+=2) {
+    currLength += dist(points[i],points[i+1],points[i+2],points[i+3]);
     integratedLength.push(currLength);
   }
   return integratedLength;
+}
+
+function duplicateAndSumPoints(points) {
+  const duplicatedPoints = points.slice().concat(reverseByTwo(points));
+  return {duplicatedPoints: duplicatedPoints, integratedLength: sumPointsLength(duplicatedPoints)}
 }
 
 class OsuFollowCircle extends React.Component {
   // needs props timeSinceStart, linearizedPoints, msVelocity, radius, windowScale, opacity
   state = {
     integratedLength: null,
+    duplicatedPoints: null,
   }
   componentWillMount(){
-    this.setState({integratedLength: sumPointsLength(this.props.linearizedPoints)})
+    this.setState(duplicateAndSumPoints(this.props.linearizedPoints));
   }
   render() {
-    const currPos = findCurrentPosition(this.props.timeSinceStart, this.props.linearizedPoints, this.props.msVelocity, this.state.integratedLength);
+    const currPos = findCurrentPosition(this.props.timeSinceStart, this.state.duplicatedPoints, this.props.msVelocity, this.state.integratedLength);
     return (
       <Circle
         radius={this.props.radius * this.props.windowScale}
