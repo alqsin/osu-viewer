@@ -1,0 +1,22 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alqsin/osu-viewer.git"
+  },
+  "author": "alqsin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alqsin/osu-viewer/issues"
+  },
+  "homepage": "https://github.com/alqsin/osu-viewer#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
