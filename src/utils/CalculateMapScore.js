@@ -62,7 +62,7 @@ function calculateCircleScore(circle, replayData, circleSize, overallDifficulty,
 
 function calculateSliderTicksHit(slider, cursorStatus, timingPoint, circleSize) {
   // determines the score of slider (0, 50, 100, 300) and returns an array containing the combo at each point of the slider
-  const tickRadius = HitObjectCalc.getCircleRadius(circleSize) * 2.5;  // no idea what correct followCircle size is
+  const tickRadius = HitObjectCalc.getCircleRadius(circleSize) * 1.6;  // no idea what correct followCircle size is
   const beatLength = timingPoint.beatLength;
   const finalTickLength = slider.duration - beatLength * (slider.ticks.length-1);
   let numRepeats = slider.repeatCount;
@@ -229,7 +229,7 @@ function mergeSliderScoreCombo(sliderScore, sliderCombo, slider) {
 
 class CalculateMapScore {
   static assignObjectHits(hitObjects, cursorStatus, circleSize, overallDifficulty, timingPoints) {
-    let scoreAndCombo = []; // array of triplets with time, score, combo
+    let scoreAndCombo = [[0,0,0]]; // array of triplets with time, score, combo
     let currHitTime = 0;
     const replayData = cursorStatus.getReplayData()
     let combo = 0;
@@ -276,7 +276,6 @@ class CalculateMapScore {
         scoreAndCombo.push([hitObjects[i].endTime, totalScore, combo])
       } else throw new Error ("Object isn't a circle, slider or spinner??")
     }
-    console.log(scoreAndCombo);
     return scoreAndCombo;
   }
 }

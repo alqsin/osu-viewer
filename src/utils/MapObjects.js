@@ -61,6 +61,9 @@ function addLinearizedPoints(currMapData) {
     const timingPoint = CurveCalc.getSliderTimingPoint(currMapData.hitObjects[i].startTime,currMapData.timingPoints);
     currMapData.hitObjects[i].ticks = CurveCalc.getSliderTicks(currMapData.hitObjects[i], currMapData.SliderMultiplier, timingPoint.velocity);
 
+    // beatLength of slider needs to be known to show follow circle
+    currMapData.hitObjects[i].beatLength = timingPoint.beatLength;
+
     // recalculate the duration properly
     currMapData.hitObjects[i].duration = currMapData.hitObjects[i].pixelLength * timingPoint.beatLength / (100.0 * currMapData.SliderMultiplier)
   } 
@@ -137,6 +140,8 @@ class MapObjects extends React.Component {
           ticks,
           objectScore,
           objectHitAt,
+          beatPixelLength,
+          beatLength,
         }) => (
           <OsuSlider
             key={++i}
@@ -153,6 +158,7 @@ class MapObjects extends React.Component {
             newCombo={newCombo}
             repeatCount={repeatCount}
             objectScore={objectScore}
+            msVelocity={beatPixelLength / beatLength}
           />
         ))}
         {this.state.circles.map(({

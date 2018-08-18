@@ -11,7 +11,7 @@ class OsuApproachCircle extends React.Component {
         y={this.props.y * this.props.windowScale}
         radius={this.props.baseCircleRadius * this.props.windowScale * (1 + 3*(this.props.hitTime - this.props.currTime) / (this.props.hitTime - this.props.fadeInStart))}
         stroke='blue'
-        strokeWidth={5}
+        strokeWidth={2 * this.props.windowScale}
         opacity={this.props.opacity}
       />
     )

@@ -91,7 +91,7 @@ function recursiveBezierApprox(points) {
   return recursiveBezierApprox(l).concat(recursiveBezierApprox(r))
 }
 
-function interpolate(x1,y1,x2,y2,length) {
+export function interpolate(x1,y1,x2,y2,length) {
   // gives coordinates of point length away from (x1,y1) in the direction of (x2,y2)
   const totalLen = Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2));
 
@@ -256,6 +256,9 @@ class CurveCalc {
     // returns an array containing position of each slider tick and its time
     // const sliderLength = slider.pixelLength;  // doesn't include repeats to my knowledge
     const beatPixelLength = sliderMultiplier * 100 * velocity;
+
+    // WARNING: modifying slider to allow beatPixelLength to be read by MapObjects
+    slider.beatPixelLength = beatPixelLength;
 
     var result = []
 

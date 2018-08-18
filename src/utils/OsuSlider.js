@@ -1,8 +1,9 @@
 import React from 'react';
 import {Line, Rect, Group} from 'react-konva';
-import OsuApproachCircle from './OsuApproachCircle.js'
-import HitObjectCalc from './HitObjectCalc.js'
-import OsuHitText from './OsuHitText.js'
+import OsuApproachCircle from './OsuApproachCircle.js';
+import HitObjectCalc from './HitObjectCalc.js';
+import OsuHitText from './OsuHitText.js';
+import OsuFollowCircle from './OsuFollowCircle.js';
 
 function scalePoints(points,windowScale){
   var newPoints = [];
@@ -14,7 +15,7 @@ function scalePoints(points,windowScale){
 
 class OsuSlider extends React.Component {
   // props are linearizedPoints, ticks, curveType, repeatCount, newCombo, startTime, endTime, currTime, windowScale, circleSize, approachRate, overallDifficulty,
-  // objectScore
+  // objectScore, msVelocity
   state = {
     fadeInStart: 0,
     fadeInEnd: 0,
@@ -56,6 +57,16 @@ class OsuSlider extends React.Component {
             stroke={sliderColor}
             lineCap='round'
             opacity={opacity}
+          />
+        }
+        {this.props.currTime < this.props.endTime && this.props.currTime > this.props.startTime &&
+          <OsuFollowCircle
+            timeSinceStart={this.props.currTime - this.props.startTime}
+            linearizedPoints={this.props.linearizedPoints}
+            msVelocity={this.props.msVelocity}
+            opacity={opacity}
+            radius={this.state.sliderWidth / 2 * 1.6}  // TODO: fix this
+            windowScale={this.props.windowScale}
           />
         }
         {this.props.currTime < this.props.endTime &&

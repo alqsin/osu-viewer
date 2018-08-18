@@ -16,16 +16,16 @@ class OsuScore extends React.Component {
     return (
       <Group>
         <Text
-          x={0}
-          y={0}
-          text={Math.floor(currScoreAndCombo[1])}
-          fontSize={20*this.props.windowScale}
+          x={-64 * this.props.windowScale}
+          y={-48 * this.props.windowScale}
+          text={'Score: ' + Math.floor(currScoreAndCombo[1])}
+          fontSize={18 * this.props.windowScale}
         />
         <Text
-          x={0}
-          y={25*this.props.windowScale}
-          text={currScoreAndCombo[2]}
-          fontSize={20*this.props.windowScale}
+          x={-64 * this.props.windowScale}
+          y={-28 * this.props.windowScale}
+          text={'Combo: ' + currScoreAndCombo[2]}
+          fontSize={18 * this.props.windowScale}
         />
       </Group>
     )
