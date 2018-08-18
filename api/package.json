@@ -17,6 +17,9 @@
   },
   "homepage": "https://github.com/alqsin/osu-viewer#readme",
   "dependencies": {
-    "express": "^4.16.3"
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "osu-parser": "^0.3.3",
+    "request": "^2.88.0"
   }
 }
