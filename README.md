@@ -1,20 +1,21 @@
 osu-viewer
 =====
 Extremely in-progress. Will eventually allow for the viewing of replays in a web browser.  
-See a demo of the most recent working version [here.](http://alexl.in/osu-viewer-test)  
+See a demo of the most recent working version of client [here.](http://alexl.in/osu-viewer-test)  
 
 Runs on
 -----
-React  
+React (for client)  
 react-konva (for drawing Canvas elements)  
-osu-parser (for beatmap parsing)  
-osureplayparser (for replay parsing)  
 Boostrapped with create-react-app  
+Node.js + Express (for API)  
+osu-parser (for beatmap parsing)  
 
 Usage
 -----
-`npm install` should get dependencies.  
-`npm run build` to build or `npm start` to run locally.  
+`npm install` in `client` and `api` folders should get dependencies.  
+`node src/server.js` in `api` to start API server.  
+`npm start` in `client` to run client on localhost.  
 
 License
 -----
