@@ -252,7 +252,7 @@ class CurveCalc {
     return bezierCorrectSliderLength(result, pixelLength);
   }
 
-  static getSliderTicks(slider, sliderMultiplier, beatLength, velocity) {
+  static getSliderTicks(slider, sliderMultiplier, velocity) {
     // returns an array containing position of each slider tick and its time
     // const sliderLength = slider.pixelLength;  // doesn't include repeats to my knowledge
     const beatPixelLength = sliderMultiplier * 100 * velocity;
@@ -261,12 +261,11 @@ class CurveCalc {
 
     // TODO: add repeat
     let prevTickPos = [slider.linearizedPoints[0],slider.linearizedPoints[1]]
-    let prevTickTime = slider.startTime;
     let currLength = 0;
     let lengthToNext = 0;
     for (let i=0;i<slider.linearizedPoints.length;i+=2) {
-      if (i+2 >= slider.linearizedPoints.length && currLength + lengthToNext > 0.01) {
-        result.push([slider.linearizedPoints[i],slider.linearizedPoints[i+1],prevTickTime+beatLength]);
+      if (i+2 >= slider.linearizedPoints.length && currLength > 0.1) {
+        result.push([slider.linearizedPoints[i],slider.linearizedPoints[i+1]]);
         continue;
       }
       lengthToNext = Math.sqrt(Math.pow(slider.linearizedPoints[i+2]-slider.linearizedPoints[i],2)+Math.pow(slider.linearizedPoints[i+3]-slider.linearizedPoints[i+1],2));
@@ -277,14 +276,12 @@ class CurveCalc {
       }
       while (lengthToNext + currLength >= beatPixelLength) {
         const newTickPos = interpolate(prevTickPos[0],prevTickPos[1],slider.linearizedPoints[i+2],slider.linearizedPoints[i+3],beatPixelLength-currLength);
-        const newTickTime = prevTickTime + beatLength;
-        result.push(newTickPos.concat(newTickTime));
+        result.push(newTickPos);
         lengthToNext -= (beatPixelLength - currLength);
         currLength = 0;
-        prevTickTime = newTickTime;
         prevTickPos = newTickPos;
       }
-      if (lengthToNext > 0.01) currLength += lengthToNext;
+      if (lengthToNext > 0.1) currLength += lengthToNext;
     }
     return result;
   }

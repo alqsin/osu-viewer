@@ -48,7 +48,7 @@ class Viewer extends React.Component {
               currCursorPos={currCursorPos}
               currTime={currTime}
               windowScale={this.state.windowScale}
-              replayData={currCursorStatus.getReplayData()}
+              cursorStatus={currCursorStatus}
             />
           </div>
         }

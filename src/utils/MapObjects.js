@@ -5,6 +5,7 @@ import OsuSlider from './OsuSlider.js'
 import OsuSpinner from './OsuSpinner.js'
 import CalculateMapScore from './CalculateMapScore.js'
 import CurveCalc from './CurveCalc.js'
+import OsuScore from './OsuScore.js'
 
 import mapData from './beatmaps/imagematerial.json'
 
@@ -58,7 +59,10 @@ function addLinearizedPoints(currMapData) {
     // also want to add ticks for each slider
     // first get timing point, then add ticks using its properties
     const timingPoint = CurveCalc.getSliderTimingPoint(currMapData.hitObjects[i].startTime,currMapData.timingPoints);
-    currMapData.hitObjects[i].ticks = CurveCalc.getSliderTicks(currMapData.hitObjects[i], currMapData.SliderMultiplier, timingPoint.beatLength, timingPoint.velocity);
+    currMapData.hitObjects[i].ticks = CurveCalc.getSliderTicks(currMapData.hitObjects[i], currMapData.SliderMultiplier, timingPoint.velocity);
+
+    // recalculate the duration properly
+    currMapData.hitObjects[i].duration = currMapData.hitObjects[i].pixelLength * timingPoint.beatLength / (100.0 * currMapData.SliderMultiplier)
   } 
 }
 
@@ -68,6 +72,7 @@ class MapObjects extends React.Component {
     sliders: null,
     spinners: null,
     mapSettings: null,
+    scoreAndCombo: null,
   }
 
   componentWillMount() {
@@ -78,21 +83,35 @@ class MapObjects extends React.Component {
     })
 
     // try to add linearized slider points in place
+    // this also calculates slider ticks
     addLinearizedPoints(mapData)
 
-    // get circles sliders and spinners after assigning object hits/scores
-    this.setState(collectObjects(CalculateMapScore.assignObjectHits(
+    // assign object hits in place, collecting resulting time/score/combo points
+    const scoreAndCombo = CalculateMapScore.assignObjectHits(
       mapData.hitObjects,
-      this.props.replayData,
+      this.props.cursorStatus,
       mapSettings.circleSize,
       mapSettings.overallDifficulty,
-    )));
+      mapData.timingPoints,
+    );
+
+    // save time/score/combo points into state
+    this.setState({scoreAndCombo: scoreAndCombo});
+    
+    // get circles sliders and spinners after assigning object hits/scores
+    this.setState(collectObjects(mapData.hitObjects));
   }
 
   render() {
     let i = 0;
     return (
       <Group>
+        <OsuScore
+          key={++i}
+          scoreAndCombo={this.state.scoreAndCombo}
+          currTime={this.props.currTime}
+          windowScale={this.props.windowScale}
+        />
         {this.state.spinners.map(({
           startTime,
           endTime,

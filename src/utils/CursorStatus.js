@@ -1,4 +1,3 @@
-import React from 'react';
 import replayData from './replays/imagematerial.json'
 
 const binarySearchLower = (d, t, s, e) => {
@@ -14,17 +13,11 @@ function calculatePos(currTime,currReplayData) {
 
   let currPoint = binarySearchLower(currReplayData,currTime,0,replayDataLength-1)
 
-  if (currPoint == null) return {x: 256, y: 192};
-  
   return currPoint
 }
 
 // note that totalTime is summed by the node.js script
-class CursorStatus extends React.Component {
-  state = {
-    replayAnalyzed: false,
-  }
-
+class CursorStatus {
   getReplayData = () => {
     return replayData;
   }
@@ -35,9 +28,12 @@ class CursorStatus extends React.Component {
 
   posAt = currTime => {
     const currPos = calculatePos(currTime,replayData);
-    return {x: currPos.x, y: currPos.y}
+    if (currPos == null) {
+      return {x: null, y: null, keys: null}
+    }
+    return {x: currPos.x, y: currPos.y, keys: currPos.keyPressedBitwise}
   }
-  render () { return null }
+
 }
 
 export default CursorStatus
