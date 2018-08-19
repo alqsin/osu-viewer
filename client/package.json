@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "konva": "^2.1.8",
-    "lzma": "^2.3.2",
     "osu-parser": "^0.3.3",
     "osureplayparser": "^1.0.1",
     "rc-slider": "^8.6.1",
@@ -19,5 +18,6 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "homepage": "http://alexl.in/osu-viewer-test"
+  "homepage": "http://alexl.in/osu-viewer-test",
+  "proxy": "http://localhost:3001/"
 }

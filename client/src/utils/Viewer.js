@@ -4,11 +4,21 @@ import TimeKeeper from './TimeKeeper.js';
 import TimeSlider from './TimeSlider.js';
 import OsuWindow from './OsuWindow.js';
 
-// TODO: separate static rectangle into a different layer
-
 class Viewer extends React.Component {
   state = {
     windowScale: 0,
+    replayData: null,
+    beatmapData: null,
+    dataLoaded: false,
+    cursorStatus: null,
+  }
+  callApi = async () => {
+    const response = await fetch('api/252238/cookiezi');
+    const body = await response.json();
+  
+    if (response.status !== 200) throw new Error(body.message);
+  
+    return body;
   }
   updatewindowScale = () => {
     const requiredBufferY = 16;
@@ -22,6 +32,14 @@ class Viewer extends React.Component {
     })
   }
   componentDidMount() {
+    this.callApi()
+      .then(res => {
+        const replayData = res.replayData;
+        const beatmapData = res.beatmapData;
+        this.setState({dataLoaded: true, beatmapData: beatmapData, replayData: replayData, cursorStatus: new CursorStatus(replayData)});
+      })
+      .catch(err => console.log(err));
+    
     window.addEventListener('resize', this.updatewindowScale.bind(this))
     this.updatewindowScale()
   }
@@ -30,12 +48,18 @@ class Viewer extends React.Component {
   }
 
   render() {
-    const currCursorStatus = new CursorStatus();
-    const totalReplayLength = 1.0 * currCursorStatus.getReplayLength() / 1000;
+    if (!this.state.dataLoaded) {
+      return (
+        <div>
+          Loading replay data...
+        </div>
+      )
+    }
+    const totalReplayLength = 1.0 * this.state.cursorStatus.getReplayLength() / 1000;
     return (
       <TimeKeeper
         totalTime = {totalReplayLength}
-        cursorStatus = {currCursorStatus}
+        cursorStatus = {this.state.cursorStatus}
         render={({currTime,currCursorPos,timeControls}) =>
           <div>
             <TimeSlider 
@@ -48,7 +72,7 @@ class Viewer extends React.Component {
               currCursorPos={currCursorPos}
               currTime={currTime}
               windowScale={this.state.windowScale}
-              cursorStatus={currCursorStatus}
+              cursorStatus={this.state.cursorStatus}
             />
           </div>
         }

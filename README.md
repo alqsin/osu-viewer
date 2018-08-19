@@ -6,16 +6,17 @@ See a demo of the most recent working version of client [here.](http://alexl.in/
 Runs on
 -----
 React (for client)  
+create-react-app  
 react-konva (for drawing Canvas elements)  
-Boostrapped with create-react-app  
 Node.js + Express (for API)  
 osu-parser (for beatmap parsing)  
 
 Usage
 -----
-`npm install` in `client` and `api` folders should get dependencies.  
-`node src/server.js` in `api` to start API server.  
-`npm start` in `client` to run client on localhost.  
+`npm install` in `client/` and `api/` folders should get dependencies.  
+You'll need a `.env` file in `api/src/` with `OSU_API_KEY` for osu! API access  
+`node server.js` from `api/src/` to start API server.  
+`npm start` in `client/` to run client on localhost.  
 
 License
 -----

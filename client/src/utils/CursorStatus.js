@@ -1,5 +1,3 @@
-import replayData from './replays/imagematerial.json'
-
 const binarySearchLower = (d, t, s, e) => {
   const m = Math.floor((s + e)/2);
   if (t >= d[m].totalTime && t <= d[m+1].totalTime) return d[m];
@@ -8,26 +6,49 @@ const binarySearchLower = (d, t, s, e) => {
   return binarySearchLower(d,t,s,m);
 }
 
-function calculatePos(currTime,currReplayData) {
+function calculatePos(currTime,replayData) {
   const replayDataLength = replayData.length;
 
-  let currPoint = binarySearchLower(currReplayData,currTime,0,replayDataLength-1)
+  let currPoint = binarySearchLower(replayData,currTime,0,replayDataLength-1)
 
   return currPoint
 }
 
-// note that totalTime is summed by the node.js script
+function interpretReplayData(replayData) {
+  // takes replayData, an array of size 4N containing replay info
+  // and returns an array containing labeled data
+  var result = [];
+  let totalTime = 0;
+  for (let i=0; i< replayData.length-2;i++) {
+    const currPoint = replayData[i].split('|');
+    totalTime += parseInt(currPoint[0], 10);
+    result.push(
+      {
+        totalTime: totalTime,
+        x: parseFloat(currPoint[1]),
+        y: parseFloat(currPoint[2]),
+        keyPressedBitwise: parseInt(currPoint[3], 10),
+      }
+    )
+  }
+  return result;
+}
+
 class CursorStatus {
+  constructor(replayData) {
+    // takes lzma-decoded replayData
+    this.replayData = interpretReplayData(replayData.split(','));
+  }
   getReplayData = () => {
-    return replayData;
+    return this.replayData;
   }
 
   getReplayLength = () => {
-    return replayData[replayData.length - 1].totalTime;
+    return this.replayData[this.replayData.length - 1].totalTime;
   }
 
   posAt = currTime => {
-    const currPos = calculatePos(currTime,replayData);
+    const currPos = calculatePos(currTime,this.replayData);
     if (currPos == null) {
       return {x: null, y: null, keys: null}
     }

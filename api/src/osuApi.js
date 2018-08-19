@@ -1,6 +1,18 @@
-const fs = require('fs');
+const my_lzma = require('lzma');
 const request = require('request');
 const beatmapIO = require('./beatmapIO.js')
+
+function decodeReplayData(replayData64, cb) {
+  const replayBuffer = Buffer.from(replayData64, 'base64');
+
+  my_lzma.decompress(replayBuffer, (result, error) => {
+    if (error) {
+      console.log(error);
+      cb(null);
+    }
+    cb(result);
+  })
+}
 
 function constructHttpUrl(url, params) {
   // adds params to url
@@ -45,7 +57,9 @@ module.exports = {
       // should probably verify that beatmap is valid here
       const beatmapId = beatmap.BeatmapID;
       requestReplayData(beatmapId, user, (replayResponse) => {
-        res.send({replayData: JSON.parse(replayResponse).content, beatmapData: beatmap})
+        decodeReplayData(JSON.parse(replayResponse).content, (replayData) => {
+          res.send({replayData: replayData, beatmapData: beatmap})
+        });
       });
     });
 
