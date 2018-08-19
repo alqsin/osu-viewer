@@ -1,0 +1,22 @@
+SOON
+add slider repeat indicator
+fix how sliders render (jagged + square ended)
+allow beatmap to be paused
+add combo colors and numbers
+add slider/circle borders
+create better spinner graphics?
+determine proper approach circle radius
+determine proper follow circle radius
+add spinner score calculation
+verify score calculation by fetching score via api
+incorporate difficulty into score calculation
+detach score calculation from MapObjects
+add rate limit
+
+EVENTUALLY
+optimize rendering
+add key tracker
+add actual graphics
+add music + volume control
+create replay selection/loading page
+restucture project - get rid of create-react-app default files, sort out javascript files, etc.
