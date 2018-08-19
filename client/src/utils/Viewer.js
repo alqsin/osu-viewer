@@ -3,14 +3,16 @@ import CursorStatus from './CursorStatus.js';
 import TimeKeeper from './TimeKeeper.js';
 import TimeSlider from './TimeSlider.js';
 import OsuWindow from './OsuWindow.js';
+import MapScoreCalc from './MapScoreCalc.js';
 
 class Viewer extends React.Component {
   state = {
     windowScale: 0,
     replayData: null,
-    beatmapData: null,
+    mapData: null,
     dataLoaded: false,
     cursorStatus: null,
+    scoreData: null,
   }
   callApi = async () => {
     const response = await fetch('api/252238/cookiezi');
@@ -19,6 +21,22 @@ class Viewer extends React.Component {
     if (response.status !== 200) throw new Error(body.message);
   
     return body;
+  }
+  updateMapData = (mapData, cursorStatus) => {
+    // add linearized points and ticks directly to sliders
+    MapScoreCalc.addLinearizedPoints(mapData);
+
+    // assign object hits in place, collecting resulting time/score/combo points
+    const scoreData = MapScoreCalc.assignObjectHits(
+      mapData.hitObjects,
+      cursorStatus,
+      mapData.CircleSize,
+      mapData.OverallDifficulty,
+      mapData.timingPoints,
+    );
+
+    // save time/score/combo points into state
+    return scoreData;
   }
   updatewindowScale = () => {
     const requiredBufferY = 16;
@@ -36,7 +54,9 @@ class Viewer extends React.Component {
       .then(res => {
         const replayData = res.replayData;
         const beatmapData = res.beatmapData;
-        this.setState({dataLoaded: true, beatmapData: beatmapData, replayData: replayData, cursorStatus: new CursorStatus(replayData)});
+        const cursorStatus = new CursorStatus(replayData);
+        const scoreData = this.updateMapData(beatmapData, cursorStatus);
+        this.setState({dataLoaded: true, mapData: beatmapData, replayData: replayData, cursorStatus: cursorStatus, scoreData: scoreData});
       })
       .catch(err => console.log(err));
     
@@ -73,6 +93,8 @@ class Viewer extends React.Component {
               currTime={currTime}
               windowScale={this.state.windowScale}
               cursorStatus={this.state.cursorStatus}
+              scoreData={this.state.scoreData}
+              mapData={this.state.mapData}
             />
           </div>
         }

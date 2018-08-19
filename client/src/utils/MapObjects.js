@@ -3,11 +3,6 @@ import { Group } from 'react-konva';
 import OsuCircle from './OsuCircle.js'
 import OsuSlider from './OsuSlider.js'
 import OsuSpinner from './OsuSpinner.js'
-import CalculateMapScore from './CalculateMapScore.js'
-import CurveCalc from './CurveCalc.js'
-import OsuScore from './OsuScore.js'
-
-import mapData from './beatmaps/imagematerial.json'
 
 function collectObjects(hitObjects) {
   // go through hitObjects and collect each type of object into
@@ -28,47 +23,6 @@ function collectObjects(hitObjects) {
   return {circles: circleArray, sliders: sliderArray, spinners: spinnerArray};
 }
 
-function getMapSettings(currMapData) {
-  // gets the important map settings from the map data
-  var mapSettings = {}
-  mapSettings.circleSize = currMapData.CircleSize;
-  mapSettings.overallDifficulty = currMapData.OverallDifficulty;
-  mapSettings.approachRate = currMapData.ApproachRate;
-  return mapSettings;
-}
-
-// maybe move this function to CurveCalc since it does a lot of calculations
-function addLinearizedPoints(currMapData) {
-  // creates linearization for every slider
-  for (let i=0;i<currMapData.hitObjects.length;i++){
-    // only do this for sliders
-    if (currMapData.hitObjects[i].objectName !== 'slider') continue;
-
-    // flatten current object points
-    currMapData.hitObjects[i].points = [].concat.apply([], currMapData.hitObjects[i].points)
-
-    // for each type of slider, use a different process
-    if (currMapData.hitObjects[i].curveType === "linear") {
-      currMapData.hitObjects[i].linearizedPoints = CurveCalc.linearCorrectPathLength(currMapData.hitObjects[i].points, currMapData.hitObjects[i].pixelLength)
-    } else if (currMapData.hitObjects[i].curveType === "bezier" || currMapData.hitObjects[i].points.length > 6) {
-      currMapData.hitObjects[i].linearizedPoints = CurveCalc.linearizeBezier(currMapData.hitObjects[i].points, currMapData.hitObjects[i].pixelLength)
-    } else if (currMapData.hitObjects[i].curveType === "pass-through" && currMapData.hitObjects[i].points.length === 6) {
-        currMapData.hitObjects[i].linearizedPoints = CurveCalc.linearizeArc(currMapData.hitObjects[i].points, currMapData.hitObjects[i].pixelLength)
-    } else throw new Error("Invalid slider???");
-
-    // also want to add ticks for each slider
-    // first get timing point, then add ticks using its properties
-    const timingPoint = CurveCalc.getSliderTimingPoint(currMapData.hitObjects[i].startTime,currMapData.timingPoints);
-    currMapData.hitObjects[i].ticks = CurveCalc.getSliderTicks(currMapData.hitObjects[i], currMapData.SliderMultiplier, timingPoint.velocity);
-
-    // beatLength of slider needs to be known to show follow circle
-    currMapData.hitObjects[i].beatLength = timingPoint.beatLength;
-
-    // recalculate the duration properly
-    currMapData.hitObjects[i].duration = currMapData.hitObjects[i].pixelLength * timingPoint.beatLength / (100.0 * currMapData.SliderMultiplier)
-  } 
-}
-
 class MapObjects extends React.Component {
   state = {
     circles: null,
@@ -76,45 +30,20 @@ class MapObjects extends React.Component {
     spinners: null,
     mapSettings: null,
     scoreAndCombo: null,
+    objectsLoaded: false,
   }
 
   componentWillMount() {
-    // test importing mapData here instead of globally
-    const mapSettings = getMapSettings(mapData);
-    this.setState({
-      mapSettings: mapSettings,
-    })
-
-    // try to add linearized slider points in place
-    // this also calculates slider ticks
-    addLinearizedPoints(mapData)
-
-    // assign object hits in place, collecting resulting time/score/combo points
-    const scoreAndCombo = CalculateMapScore.assignObjectHits(
-      mapData.hitObjects,
-      this.props.cursorStatus,
-      mapSettings.circleSize,
-      mapSettings.overallDifficulty,
-      mapData.timingPoints,
-    );
-
-    // save time/score/combo points into state
-    this.setState({scoreAndCombo: scoreAndCombo});
-    
     // get circles sliders and spinners after assigning object hits/scores
-    this.setState(collectObjects(mapData.hitObjects));
+    this.setState(collectObjects(this.props.mapData.hitObjects));
+    this.setState({objectsLoaded: true});
   }
 
   render() {
+    if (!this.state.objectsLoaded) return null;
     let i = 0;
     return (
       <Group>
-        <OsuScore
-          key={++i}
-          scoreAndCombo={this.state.scoreAndCombo}
-          currTime={this.props.currTime}
-          windowScale={this.props.windowScale}
-        />
         {this.state.spinners.map(({
           startTime,
           endTime,
@@ -130,7 +59,6 @@ class MapObjects extends React.Component {
           />
         ))}
         {this.state.sliders.map(({
-          points,
           curveType,
           startTime,
           endTime,
@@ -139,7 +67,6 @@ class MapObjects extends React.Component {
           linearizedPoints,
           ticks,
           objectScore,
-          objectHitAt,
           beatPixelLength,
           beatLength,
         }) => (
@@ -152,9 +79,9 @@ class MapObjects extends React.Component {
             endTime={endTime}
             currTime={this.props.currTime}
             windowScale={this.props.windowScale}
-            circleSize={this.state.mapSettings.circleSize}
-            approachRate={this.state.mapSettings.approachRate}
-            overallDifficulty={this.state.mapSettings.overallDifficulty}
+            circleSize={this.props.mapData.CircleSize}
+            approachRate={this.props.mapData.ApproachRate}
+            overallDifficulty={this.props.mapData.OverallDifficulty}
             newCombo={newCombo}
             repeatCount={repeatCount}
             objectScore={objectScore}
@@ -175,9 +102,9 @@ class MapObjects extends React.Component {
             startTime={startTime}
             currTime={this.props.currTime}
             windowScale={this.props.windowScale}
-            circleSize={this.state.mapSettings.circleSize}
-            approachRate={this.state.mapSettings.approachRate}
-            overallDifficulty={this.state.mapSettings.overallDifficulty}
+            circleSize={this.props.mapData.CircleSize}
+            approachRate={this.props.mapData.ApproachRate}
+            overallDifficulty={this.props.mapData.OverallDifficulty}
             newCombo={newCombo}
             objectScore={objectScore}
             objectHitAt={objectHitAt}

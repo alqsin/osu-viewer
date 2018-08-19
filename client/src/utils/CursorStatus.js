@@ -19,6 +19,7 @@ function interpretReplayData(replayData) {
   // and returns an array containing labeled data
   var result = [];
   let totalTime = 0;
+  // last 2 frames of replay data are garbage for whatever reason, so skip those
   for (let i=0; i< replayData.length-2;i++) {
     const currPoint = replayData[i].split('|');
     totalTime += parseInt(currPoint[0], 10);
@@ -36,7 +37,7 @@ function interpretReplayData(replayData) {
 
 class CursorStatus {
   constructor(replayData) {
-    // takes lzma-decoded replayData
+    // takes lzma-decoded replayData and feeds it to interpreter
     this.replayData = interpretReplayData(replayData.split(','));
   }
   getReplayData = () => {

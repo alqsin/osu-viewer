@@ -10,21 +10,21 @@ const binarySearchLower = (d, t, s, e) => {
 }
 
 class OsuScore extends React.Component {
-  // need props scoreAndCombo, currTime, windowScale
+  // need props scoreData, currTime, windowScale
   render() {
-    const currScoreAndCombo = binarySearchLower(this.props.scoreAndCombo, this.props.currTime, 0, this.props.scoreAndCombo.length-1);
+    const currScore = binarySearchLower(this.props.scoreData, this.props.currTime, 0, this.props.scoreData.length-1);
     return (
       <Group>
         <Text
           x={-64 * this.props.windowScale}
           y={-48 * this.props.windowScale}
-          text={'Score: ' + Math.floor(currScoreAndCombo[1])}
+          text={'Score: ' + Math.floor(currScore[1])}
           fontSize={18 * this.props.windowScale}
         />
         <Text
           x={-64 * this.props.windowScale}
           y={-28 * this.props.windowScale}
-          text={'Combo: ' + currScoreAndCombo[2]}
+          text={'Combo: ' + currScore[2]}
           fontSize={18 * this.props.windowScale}
         />
       </Group>

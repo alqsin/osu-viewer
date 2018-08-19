@@ -227,7 +227,7 @@ function mergeSliderScoreCombo(sliderScore, sliderCombo, slider) {
   return result;
 }
 
-class CalculateMapScore {
+class MapScoreCalc {
   static assignObjectHits(hitObjects, cursorStatus, circleSize, overallDifficulty, timingPoints) {
     let scoreAndCombo = [[0,0,0]]; // array of triplets with time, score, combo
     let currHitTime = 0;
@@ -278,6 +278,37 @@ class CalculateMapScore {
     }
     return scoreAndCombo;
   }
+
+  static addLinearizedPoints(mapData) {
+    // creates linearization for every slider
+    for (let i=0;i<mapData.hitObjects.length;i++){
+      // only do this for sliders
+      if (mapData.hitObjects[i].objectName !== 'slider') continue;
+  
+      // flatten current object points
+      mapData.hitObjects[i].points = [].concat.apply([], mapData.hitObjects[i].points)
+  
+      // for each type of slider, use a different process
+      if (mapData.hitObjects[i].curveType === "linear") {
+        mapData.hitObjects[i].linearizedPoints = CurveCalc.linearCorrectPathLength(mapData.hitObjects[i].points, mapData.hitObjects[i].pixelLength)
+      } else if (mapData.hitObjects[i].curveType === "bezier" || mapData.hitObjects[i].points.length > 6) {
+        mapData.hitObjects[i].linearizedPoints = CurveCalc.linearizeBezier(mapData.hitObjects[i].points, mapData.hitObjects[i].pixelLength)
+      } else if (mapData.hitObjects[i].curveType === "pass-through" && mapData.hitObjects[i].points.length === 6) {
+          mapData.hitObjects[i].linearizedPoints = CurveCalc.linearizeArc(mapData.hitObjects[i].points, mapData.hitObjects[i].pixelLength)
+      } else throw new Error("Invalid slider???");
+  
+      // also want to add ticks for each slider
+      // first get timing point, then add ticks using its properties
+      const timingPoint = CurveCalc.getSliderTimingPoint(mapData.hitObjects[i].startTime,mapData.timingPoints);
+      mapData.hitObjects[i].ticks = CurveCalc.getSliderTicks(mapData.hitObjects[i], mapData.SliderMultiplier, timingPoint.velocity);
+  
+      // beatLength of slider needs to be known to show follow circle
+      mapData.hitObjects[i].beatLength = timingPoint.beatLength;
+  
+      // recalculate the duration properly
+      mapData.hitObjects[i].duration = mapData.hitObjects[i].pixelLength * timingPoint.beatLength / (100.0 * mapData.SliderMultiplier)
+    } 
+  }
 }
 
-export default CalculateMapScore;
+export default MapScoreCalc;
