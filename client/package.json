@@ -19,6 +19,6 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "homepage": "http://alexl.in/osu-viewer-test",
+  "homepage": "http://alexl.in/osu-viewer",
   "proxy": "http://localhost:3001/"
 }

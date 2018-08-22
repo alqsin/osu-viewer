@@ -91,6 +91,9 @@ function calculateSliderTicksHit(slider, cursorStatus, timingPoint, circleSize) 
       // handle last tick
       currTime -= (beatLength - finalTickLength);
 
+      // apparently slider ends are calculated 36 ms early
+      if (numRepeats === 1) currTime -= 36;
+
       tickResult.push(checkSingleTick(cursorStatus.posAt(currTime), slider.ticks[slider.ticks.length-1][0], slider.ticks[slider.ticks.length-1][1], tickRadius));
 
       tickTime.push(currTime);
@@ -107,9 +110,12 @@ function calculateSliderTicksHit(slider, cursorStatus, timingPoint, circleSize) 
         tickTime.push(currTime);
         currTime += beatLength;
       }
+      // apparently slider ends are calculated 36 ms early
+      if (numRepeats === 1) currTime -= 36;
+
       // check origin tick
       tickResult.push(checkSingleTick(cursorStatus.posAt(currTime), slider.linearizedPoints[0], slider.linearizedPoints[1], tickRadius));
-
+      
       tickTime.push(currTime);
       currTime += beatLength;
 

@@ -3,7 +3,7 @@ import React from 'react';
 class TimeKeeper extends React.Component {
   // props are {totalTime}
   state = {
-    timeSpeed: 1,
+    timeSpeed: 1.0,
     currTime: 0,
   }
 

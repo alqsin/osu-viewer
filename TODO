@@ -11,6 +11,8 @@ add spinner score calculation
 verify score calculation by fetching score via api
 incorporate difficulty into score calculation
 add api module which controls rate limit
+add initialization of replay names to ids
+add api request validation
 
 EVENTUALLY
 optimize rendering

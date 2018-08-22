@@ -19,6 +19,7 @@ class MapSelector extends React.Component {
     player: null,
     playerList: null,
     errorOccurred: false,
+    beatmapSelectionMade: false,
     beatmapSelected: false,
     playerSelected: false,
   }
@@ -31,6 +32,7 @@ class MapSelector extends React.Component {
     return body;
   }
   selectBeatmap = (value, option) => {
+    this.setState({beatmapSelectionMade: true});
     getPlayers(value)
       .then(res => {
         const players = [];
@@ -72,7 +74,7 @@ class MapSelector extends React.Component {
         </div>
       )
     }
-    if (!this.state.beatmapSelected) {
+    if (!this.state.beatmapSelectionMade) {
       return(
         <div style={{ width: 300 }}>
           Please select a beatmap from the list:<br></br>
@@ -86,6 +88,13 @@ class MapSelector extends React.Component {
               <Option key={x.id}>{x.name}</Option>
             ))}
           </Select>
+        </div>
+      )
+    }
+    if (!this.state.beatmapSelected) {
+      return(
+        <div>
+          Loading top 50 players...
         </div>
       )
     }
