@@ -24,19 +24,11 @@ function constructHttpUrl(url, params) {
   return url;
 }
 
-function requestReplayData(beatmapId, user, cb) {
-  const urlParams = {
-    k: process.env.OSU_API_KEY,
-    m: '0',
-    b: beatmapId,
-    u: user,
-  }
-
-  const osuUrl = constructHttpUrl('https://osu.ppy.sh/api/get_replay',urlParams);
+function doRequest(url, urlParams, cb) {
+  const osuUrl = constructHttpUrl(url,urlParams);
 
   function callback(error, response, body) {
     if (!error && response.statusCode == 200) {
-      // console.log(response);
       cb(body);
     }
     else {
@@ -46,6 +38,37 @@ function requestReplayData(beatmapId, user, cb) {
   }
 
   request.post({url: osuUrl}, callback);
+}
+
+function requestReplayData(beatmapId, user, cb) {
+  const urlParams = {
+    k: process.env.OSU_API_KEY,
+    m: '0',
+    b: beatmapId,
+    u: user,
+  }
+
+  doRequest('https://osu.ppy.sh/api/get_replay',urlParams, cb);
+}
+
+function requestBeatmapInfo(beatmapId, cb) {
+  const urlParams = {
+    k: process.env.OSU_API_KEY,
+    m: '0',
+    b: beatmapId,
+  }
+
+  doRequest('https://osu.ppy.sh/api/get_beatmaps',urlParams, cb);
+}
+
+function requestBeatmapScores(beatmapId, cb) {
+  const urlParams = {
+    k: process.env.OSU_API_KEY,
+    m: '0',
+    b: beatmapId,
+  }
+
+  doRequest('https://osu.ppy.sh/api/get_scores',urlParams, cb);
 }
 
 module.exports = {
@@ -66,8 +89,25 @@ module.exports = {
   },
 
   getBeatmaps(res) {
-    beatmapIO.readBeatmapNames((files) => {
+    beatmapIO.readBeatmaps((files) => {
       res.send(files);
     });
+  },
+
+  getScores(res, beatmapId) {
+    requestBeatmapScores(beatmapId, (scores) => {
+      res.send(scores);
+    })
+  },
+
+  initialize(cb) {
+    function requestBeatmapName(beatmapId, cb) {
+      requestBeatmapInfo(beatmapId, (res) => {
+        const resParsed = JSON.parse(res);
+        const beatmapName = '' + resParsed[0].artist + ' - ' + resParsed[0].title + ' [' + resParsed[0].version + ']';
+        cb(beatmapName);
+      })
+    }
+    beatmapIO.initializeTranslator(requestBeatmapName, cb);
   }
 }

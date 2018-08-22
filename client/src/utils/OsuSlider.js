@@ -65,7 +65,7 @@ class OsuSlider extends React.Component {
             linearizedPoints={this.props.linearizedPoints}
             msVelocity={this.props.msVelocity}
             opacity={opacity}
-            radius={this.state.sliderWidth / 2 * 1.6}  // TODO: fix this
+            circleRadius={HitObjectCalc.getCircleRadius(this.props.circleSize)} // OsuFollowCircle calculates its own correct size
             windowScale={this.props.windowScale}
           />
         }

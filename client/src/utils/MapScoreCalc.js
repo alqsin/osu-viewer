@@ -60,9 +60,16 @@ function calculateCircleScore(circle, replayData, circleSize, overallDifficulty,
   return [0,circle.startTime + window50];
 }
 
+function checkSingleTick(currCursorPos, tickX, tickY, tickRadius) {
+  if (!anyKeyPressed(currCursorPos.keys)) return false;
+  if (checkCursorInRadius(currCursorPos.x, currCursorPos.y, tickX, tickY, tickRadius)) return true;
+  return false;
+}
+
 function calculateSliderTicksHit(slider, cursorStatus, timingPoint, circleSize) {
-  // determines the score of slider (0, 50, 100, 300) and returns an array containing the combo at each point of the slider
-  const tickRadius = HitObjectCalc.getCircleRadius(circleSize) * 1.6;  // no idea what correct followCircle size is
+  // returns two arrays, one with a set of the slider ticks hit and one with the time of each slider hit
+  // TODO: tickTime is probably not useful, remove later
+  const tickRadius = HitObjectCalc.getCircleRadius(circleSize) * 2.4;  // this is massive, need to test to see if it's right
   const beatLength = timingPoint.beatLength;
   const finalTickLength = slider.duration - beatLength * (slider.ticks.length-1);
   let numRepeats = slider.repeatCount;
@@ -70,27 +77,21 @@ function calculateSliderTicksHit(slider, cursorStatus, timingPoint, circleSize) 
   let forward = true;
   var tickResult = [];
   var tickTime = [];
-  var currCursorPos = null;
 
   while (numRepeats > 0) {
     // if going in forward direction, just go from start tick to end tick
     if (forward) {
       for (let i=0; i<slider.ticks.length-1;i++) {
-        currCursorPos = cursorStatus.posAt(currTime);
-        if (!anyKeyPressed(currCursorPos.keys)) tickResult.push(false);
-        else if (checkCursorInRadius(currCursorPos.x, currCursorPos.y, slider.ticks[i][0], slider.ticks[i][1], tickRadius)) tickResult.push(true);
-        else tickResult.push(false);
+        tickResult.push(checkSingleTick(cursorStatus.posAt(currTime), slider.ticks[i][0], slider.ticks[i][1], tickRadius));
 
         tickTime.push(currTime);
         currTime += beatLength;
+
       }
       // handle last tick
       currTime -= (beatLength - finalTickLength);
 
-      currCursorPos = cursorStatus.posAt(currTime);
-      if (!anyKeyPressed(currCursorPos.keys)) tickResult.push(false);
-      else if (checkCursorInRadius(currCursorPos.x, currCursorPos.y, slider.ticks[slider.ticks.length-1][0], slider.ticks[slider.ticks.length-1][1], tickRadius)) tickResult.push(true);
-      else tickResult.push(false);
+      tickResult.push(checkSingleTick(cursorStatus.posAt(currTime), slider.ticks[slider.ticks.length-1][0], slider.ticks[slider.ticks.length-1][1], tickRadius));
 
       tickTime.push(currTime);
       currTime += finalTickLength;
@@ -101,19 +102,13 @@ function calculateSliderTicksHit(slider, cursorStatus, timingPoint, circleSize) 
     // if going in backwards direction, go from second to last tick to origin
     else {
       for (let i=slider.ticks.length-2;i>=0;i--) {
-        currCursorPos = cursorStatus.posAt(currTime);
-        if (!anyKeyPressed(currCursorPos.keys)) tickResult.push(false);
-        else if (checkCursorInRadius(currCursorPos.x, currCursorPos.y, slider.ticks[i][0], slider.ticks[i][1], tickRadius)) tickResult.push(true);
-        else tickResult.push(false);
+        tickResult.push(checkSingleTick(cursorStatus.posAt(currTime), slider.ticks[i][0], slider.ticks[i][1], tickRadius));
 
         tickTime.push(currTime);
         currTime += beatLength;
       }
       // check origin tick
-      currCursorPos = cursorStatus.posAt(currTime);
-      if (!anyKeyPressed(currCursorPos.keys)) tickResult.push(false);
-      else if (checkCursorInRadius(currCursorPos.x, currCursorPos.y, slider.linearizedPoints[0], slider.linearizedPoints[1], tickRadius)) tickResult.push(true);
-      else tickResult.push(false);
+      tickResult.push(checkSingleTick(cursorStatus.posAt(currTime), slider.linearizedPoints[0], slider.linearizedPoints[1], tickRadius));
 
       tickTime.push(currTime);
       currTime += beatLength;

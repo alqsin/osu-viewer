@@ -6,6 +6,7 @@
     "konva": "^2.1.8",
     "osu-parser": "^0.3.3",
     "osureplayparser": "^1.0.1",
+    "rc-select": "^8.2.1",
     "rc-slider": "^8.6.1",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",

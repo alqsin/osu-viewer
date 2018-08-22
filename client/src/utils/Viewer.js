@@ -14,8 +14,9 @@ class Viewer extends React.Component {
     cursorStatus: null,
     scoreData: null,
   }
-  callApi = async () => {
-    const response = await fetch('api/252238/cookiezi');
+  callApi = async (beatmapId, username) => {
+    // const response = await fetch('api/252238/cookiezi');
+    const response = await fetch('api/replays/' + beatmapId + '/' + username);
     const body = await response.json();
   
     if (response.status !== 200) throw new Error(body.message);
@@ -35,6 +36,19 @@ class Viewer extends React.Component {
       mapData.timingPoints,
     );
 
+    // log # of 300s, 100s, 50s, misses
+    var objectScores = [0, 0, 0, 0];
+    for (let i=0;i<mapData.hitObjects.length;i++){
+      if (mapData.hitObjects[i].objectScore === 300) objectScores[0] += 1;
+      else if (mapData.hitObjects[i].objectScore === 100) objectScores[1] += 1;
+      else if (mapData.hitObjects[i].objectScore === 50) objectScores[2] += 1;
+      else if (mapData.hitObjects[i].objectScore === 0) objectScores[3] += 1;
+    }
+    console.log("300 count: " + objectScores[0]);
+    console.log("100 count: " + objectScores[1]);
+    console.log("50 count: " + objectScores[2]);
+    console.log("miss count: " + objectScores[3]);
+
     // save time/score/combo points into state
     return scoreData;
   }
@@ -50,7 +64,7 @@ class Viewer extends React.Component {
     })
   }
   componentDidMount() {
-    this.callApi()
+    this.callApi(this.props.beatmapId, this.props.player)
       .then(res => {
         const replayData = res.replayData;
         const beatmapData = res.beatmapData;

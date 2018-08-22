@@ -48,10 +48,11 @@ function duplicateAndSumPoints(points) {
 }
 
 class OsuFollowCircle extends React.Component {
-  // needs props timeSinceStart, linearizedPoints, msVelocity, radius, windowScale, opacity
+  // needs props timeSinceStart, linearizedPoints, msVelocity, circleRadius, windowScale, opacity
   state = {
     integratedLength: null,
     duplicatedPoints: null,
+    followCircleScale: 1.8,
   }
   componentWillMount(){
     this.setState(duplicateAndSumPoints(this.props.linearizedPoints));
@@ -60,7 +61,7 @@ class OsuFollowCircle extends React.Component {
     const currPos = findCurrentPosition(this.props.timeSinceStart, this.state.duplicatedPoints, this.props.msVelocity, this.state.integratedLength);
     return (
       <Circle
-        radius={this.props.radius * this.props.windowScale}
+        radius={this.props.circleRadius * this.state.followCircleScale * this.props.windowScale}
         opacity={this.props.opacity}
         x={currPos[0] * this.props.windowScale}
         y={currPos[1] * this.props.windowScale}

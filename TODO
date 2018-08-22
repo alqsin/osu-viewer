@@ -10,8 +10,7 @@ determine proper follow circle radius
 add spinner score calculation
 verify score calculation by fetching score via api
 incorporate difficulty into score calculation
-detach score calculation from MapObjects
-add rate limit
+add api module which controls rate limit
 
 EVENTUALLY
 optimize rendering
@@ -21,5 +20,4 @@ add key tracker
 add actual graphics
 add music + volume control
 add mods
-create replay selection/loading page
 restucture project - get rid of create-react-app default files, sort out javascript files, etc.
