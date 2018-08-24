@@ -4,6 +4,7 @@ import TimeKeeper from './TimeKeeper.js';
 import TimeSlider from './TimeSlider.js';
 import OsuWindow from './OsuWindow.js';
 import MapScoreCalc from './MapScoreCalc.js';
+import SongPlayer from './SongPlayer.js';
 
 class Viewer extends React.Component {
   state = {
@@ -94,7 +95,7 @@ class Viewer extends React.Component {
       <TimeKeeper
         totalTime = {totalReplayLength}
         cursorStatus = {this.state.cursorStatus}
-        render={({currTime,currCursorPos,timeControls}) =>
+        render={({currTime,currCursorPos,timeControls,autoplay}) =>
           <div>
             <TimeSlider 
               currTime={currTime}
@@ -109,6 +110,12 @@ class Viewer extends React.Component {
               cursorStatus={this.state.cursorStatus}
               scoreData={this.state.scoreData}
               mapData={this.state.mapData}
+            />
+            <SongPlayer
+              currTime={currTime}
+              timeControls={timeControls}
+              beatmapId={this.props.beatmapId}
+              autoplay={autoplay}
             />
           </div>
         }

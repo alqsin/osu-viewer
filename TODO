@@ -23,3 +23,12 @@ add actual graphics
 add music + volume control
 add mods
 restucture project - get rid of create-react-app default files, sort out javascript files, etc.
+serve react app with node (put build folder into node app I guess?)
+
+LOW PRIORITY
+improve/simplify/condense calculation process
+  slider final tick shouldn't render
+  either add ticks twice length of sliders or method-ize forward/reverse calculation (+ last tick) to not need to do it twice
+
+????
+final slider tick is calculated early
