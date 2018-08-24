@@ -40,6 +40,11 @@ class TimeKeeper extends React.Component {
     this.setState({ autoplay: false })
   }
 
+  toggleAutoplay = () => {
+    if (this.state.autoplay) this.stopAutoplay();
+    else this.startAutoplay();
+  }
+
   render() {
     const { cursorStatus } = this.props
     const renderProps = {
@@ -50,6 +55,7 @@ class TimeKeeper extends React.Component {
         setTimeSpeed: this.setTimeSpeed,
         startAutoplay: this.startAutoplay,
         stopAutoplay: this.stopAutoplay,
+        toggleAutoplay: this.toggleAutoplay,
       },
       autoplay: this.state.autoplay,
     }

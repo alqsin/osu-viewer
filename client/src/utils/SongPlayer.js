@@ -13,7 +13,7 @@ class SongPlayer extends React.Component {
         playStatus={this.props.autoplay ? Sound.status.PLAYING : Sound.status.PAUSED}
         volume={10}
         onPlaying={({ position }) => {
-          if (Math.abs(this.props.currTime - this.state.position) > 1000) this.setState({ position: this.props.currTime })
+          if (Math.abs(this.props.currTime - position) > 100) this.setState({ position: this.props.currTime })
           else this.setState({position});
         }}
         onLoad={this.props.timeControls.startAutoplay}

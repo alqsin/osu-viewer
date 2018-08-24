@@ -54,7 +54,7 @@ class Viewer extends React.Component {
     return scoreData;
   }
   updatewindowScale = () => {
-    const requiredBufferY = 16;
+    const requiredBufferY = 25;
     const requiredBufferX = 0;
 
     this.setState(() => {
@@ -102,6 +102,8 @@ class Viewer extends React.Component {
               onChange={timeControls.setCurrTime}
               totalTime={totalReplayLength}
               windowScale={this.state.windowScale}
+              autoplay={autoplay}
+              toggleAutoplay={timeControls.toggleAutoplay}
             />
             <OsuWindow
               currCursorPos={currCursorPos}
