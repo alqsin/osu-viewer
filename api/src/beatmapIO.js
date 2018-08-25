@@ -61,8 +61,7 @@ module.exports = {
       translator = JSON.parse(fs.readFileSync(translationFile));
     }
     catch (err) {
-      console.error(err);
-      console.error('Error reading translation file, initializing from scratch.')
+      console.log('Error reading translation file, initializing from scratch.')
       translator = {};
     }
     var beatmapsToCheck = beatmaps.length;

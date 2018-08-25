@@ -1,7 +1,5 @@
 SOON
 add slider repeat indicator
-fix how sliders render (jagged + square ended)
-allow beatmap to be paused
 add combo colors and numbers
 add slider/circle borders
 create better spinner graphics?
@@ -13,6 +11,11 @@ incorporate difficulty into score calculation
 add api module which controls rate limit
 add initialization of replay names to ids
 add api request validation
+improve sounds
+  add volume control
+  sync music and time properly
+  add sounds besides music
+import material design icon stylesheet in a better place
 
 EVENTUALLY
 optimize rendering
@@ -20,9 +23,8 @@ optimize rendering
   add FadeInStart and other properties to circles/sliders instead of passing as props
 add key tracker
 add actual graphics
-add music + volume control
 add mods
-restucture project - get rid of create-react-app default files, sort out javascript files, etc.
+restructure project - get rid of create-react-app default files, sort out javascript files, etc.
 serve react app with node (put build folder into node app I guess?)
 
 LOW PRIORITY
@@ -30,5 +32,10 @@ improve/simplify/condense calculation process
   slider final tick shouldn't render
   either add ticks twice length of sliders or method-ize forward/reverse calculation (+ last tick) to not need to do it twice
 
-????
-final slider tick is calculated early
+BUGS
+music
+  fails to playwhile alt tabbed
+  errors when time is changed while autoplay is off
+beatmap calculation incorrect
+  hvick225 image material 2:09 miss doesn't break combo
+some sliders render strangely

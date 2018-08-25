@@ -21,6 +21,7 @@ test.js
 testdata
 beatmapTranslation.txt
 /api/src/beatmaps/
+/api/src/songs/
 
 # logs
 npm-debug.log*
