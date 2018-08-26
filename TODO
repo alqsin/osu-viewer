@@ -26,6 +26,8 @@ add actual graphics
 add mods
 restructure project - get rid of create-react-app default files, sort out javascript files, etc.
 serve react app with node (put build folder into node app I guess?)
+add caching of replays (verify that score hasn't changed on api request)
+add hp bar and circular time indicator
 
 LOW PRIORITY
 improve/simplify/condense calculation process
@@ -35,7 +37,7 @@ improve/simplify/condense calculation process
 BUGS
 music
   fails to playwhile alt tabbed
-  errors when time is changed while autoplay is off
+  errors when time is changed while autoplay is off (buffering issue?)
 beatmap calculation incorrect
   hvick225 image material 2:09 miss doesn't break combo
 some sliders render strangely

@@ -1,3 +1,9 @@
+function getSpinsPerSecond(overallDifficulty) {
+  if (overallDifficulty < 5) return 5 - 2 * (5 - overallDifficulty) / 5;
+  if (overallDifficulty === 5) return 5;
+  return 5 + 2.5 * (overallDifficulty - 5) / 5;
+}
+
 class HitObjectCalc {
   static getPreTime(approachRate) {
     if (approachRate > 5) return 1200 - 750 * (approachRate - 5) / 5;
@@ -21,6 +27,9 @@ class HitObjectCalc {
   }
   static getCircleRadius(circleSize) {
     return 54.4 - 4.48 * circleSize;
+  }
+  static getRequiredSpins(overallDifficulty, spinnerLengthSec) {
+    return Math.floor(getSpinsPerSecond(overallDifficulty) * spinnerLengthSec * 0.55);
   }
   static getOpacity(currTime,fadeInStart,fadeInEnd) {
     const maxOpacity = 0.7;

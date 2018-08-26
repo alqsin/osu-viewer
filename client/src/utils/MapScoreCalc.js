@@ -48,7 +48,7 @@ function calculateCircleScore(circle, replayData, circleSize, overallDifficulty,
   if (prevHitTime + 1 > searchStartTime) searchStartTime = prevHitTime + 1;
   const indStart = binarySearchMinIndex(replayData,searchStartTime,1,replayData.length-1); // use the fact that nothing happens at time 0 of replay
   for (let i=indStart;replayData[i].totalTime<=circle.startTime + window50;i++){
-    if (checkNewKeyPress(replayData[i-1].keyPressedBitwise,replayData[i].keyPressedBitwise)){
+    if (checkNewKeyPress(replayData[i-1].keys,replayData[i].keys)){
       if (checkCursorInRadius(replayData[i].x,replayData[i].y,circle.position[0],circle.position[1],circleRadius)) {
         const hitDelta = Math.abs(replayData[i].totalTime - circle.startTime);
         if (hitDelta <= window300) return [300,replayData[i].totalTime];
@@ -127,9 +127,94 @@ function calculateSliderTicksHit(slider, cursorStatus, timingPoint, circleSize) 
   return {tickResult: tickResult, tickTime: tickTime};
 }
 
-function calculateSpinnerScore(spinner, cursorStatus) {
-  // placeholder
-  return 300;
+function calculateRadianChange(x1, y1, x2, y2) {
+  // returns the delta in radians between (x1, y1) and (x2, y2)
+  // note that the center of a spinner is at (256, 192)
+
+  // get the angle (between -pi and +pi) from spinner center to points
+  const rad1 = Math.atan2(y1 - 192,x1 - 256);
+  const rad2 = Math.atan2(y2 - 192,x2 - 256);
+
+  // calculate angle difference
+  var delta = rad1 - rad2;
+
+  // squash the difference to between 0 and pi
+  if (delta > Math.PI) {
+    delta -= Math.PI * 2;
+    delta = Math.abs(delta);
+  }
+  else if (delta < Math.PI * -1) {
+    delta += Math.PI * 2;
+  }
+  else if (delta < 0) {
+    delta = Math.abs(delta);
+  }
+
+  return delta
+}
+
+function calculateSpinnerScore(spinner, replayData, requiredSpins) {
+  // returns object containing spinner score and array of time of completion of each full spin
+  var spinCompletionTime = [];
+  var totalRadians = 0;
+  var spinsCompleted = 0;
+  const indStart = binarySearchMinIndex(replayData, spinner.startTime, 0, replayData.length - 1);
+  var currentlySpinning = anyKeyPressed(replayData[indStart].keys);
+
+  for (let i = indStart + 1; replayData[i].totalTime < spinner.endTime; i++) {
+    // if player wasn't spinning last cycle, or isn't spinning now, continue
+    if (!currentlySpinning) {
+      currentlySpinning = anyKeyPressed(replayData[i].keys);
+      continue;
+    }
+    currentlySpinning = anyKeyPressed(replayData[i].keys);
+    if (!currentlySpinning) continue;
+
+    totalRadians += calculateRadianChange(replayData[i-1].x, replayData[i-1].y, replayData[i].x, replayData[i].y);
+
+    // if full spin is completed, increment spinsCompleted and log time
+    if (totalRadians - spinsCompleted * Math.PI * 2 > Math.PI * 2) {
+      ++spinsCompleted;
+      spinCompletionTime.push(replayData[i].totalTime)
+    }
+  }
+
+  let score = 0;
+
+  // TODO: check requirements for spinner completion
+  if (spinsCompleted > requiredSpins) {
+    if (spinsCompleted > requiredSpins - 2) score = 100;
+    else if (requiredSpins > 0.5 > requiredSpins - 4) score = 50;
+  }
+  else {
+    score = 300;
+  }
+
+  return {score, spinCompletionTime};
+}
+
+function getSpinnerScoreAndCombo(spinner, requiredSpins, currCombo, totalScore) {
+  // returns an array containing [time, score, combo] for every time the spinner updates score
+  // assumes spinner.spinCompletionTime and spinner.objectScore are already calculated
+  var result = [];
+
+  // go through "extra" spins
+  if (spinner.spinCompletionTime.length > requiredSpins) {
+    for (let i = requiredSpins + 1; i < spinner.spinCompletionTime.length; i++) {
+      // TODO: when score modifier is added, update this
+      totalScore += 1000;
+      result.push([spinner.spinCompletionTime[i], totalScore, currCombo]);
+    }
+  }
+
+  // spinner end
+  totalScore += getHitScore(spinner.objectScore, currCombo);
+  if (spinner.objectScore === 0) currCombo = 0;
+  else ++currCombo;
+
+  result.push([spinner.endTime, totalScore, currCombo]);
+
+  return result;
 }
 
 function getSliderComboAndScore(slider, currCombo, totalScore) {
@@ -206,6 +291,7 @@ function getHitScore(hitValue, combo) {
   return hitValue + (hitValue * actualCombo / 25.0);
 }
 
+// TODO: why tf is this not just done in getSliderComboAndScore????
 function mergeSliderScoreCombo(sliderScore, sliderCombo, slider) {
   // takes sliderScore, sliderCombo and slider (containing ticksHitTime) and returns
   // an array containing [time, score, combo] for each time score/combo updates.
@@ -217,12 +303,15 @@ function mergeSliderScoreCombo(sliderScore, sliderCombo, slider) {
   // need ticks to be length of score/combo arrays minus 2 (1 for start, 1 for overall slider)
   if (slider.ticksHitTime.length !== sliderScore.length - 2) throw new Error("Slider tick time not correct length.");
 
+  // initial hit
   result.push([slider.startTime, sliderScore[0], sliderCombo[0]]);
 
+  // slider ticks, except final
   for (let i=0;i<sliderScore.length-2;i++) {
     result.push([slider.ticksHitTime[i], sliderScore[i+1], sliderCombo[i+1]]);
   }
 
+  // final tick
   result.push([slider.endTime, sliderScore[sliderScore.length-1], sliderCombo[sliderCombo.length-1]]);
 
   return result;
@@ -244,9 +333,10 @@ class MapScoreCalc {
         // add to total score, then assign to object
         totalScore += getHitScore(currScore[0],combo);
         if (currScore[0] > 0) combo += 1;
+        else combo = 0;
 
+        // append scoreAndCombo with current hit result
         scoreAndCombo.push([currHitTime, totalScore, combo]);
-
       } else if (hitObjects[i].objectName === 'slider') {
         const currScore = calculateCircleScore(hitObjects[i],replayData,circleSize,overallDifficulty,currHitTime);
         const currTimingPoint = CurveCalc.getSliderTimingPoint(hitObjects[i].startTime, timingPoints);
@@ -257,24 +347,35 @@ class MapScoreCalc {
 
         const sliderResults = getSliderComboAndScore(hitObjects[i], combo, totalScore);
 
+        // sliderResults provides score and combo after final tick of slider
         combo = sliderResults.sliderCombo[sliderResults.sliderCombo.length - 1]
         totalScore = sliderResults.sliderScore[sliderResults.sliderScore.length - 1]
 
         // the slider is probably not considered when checking if you can hit a note or not, so just assign currHitTime to startTime
         currHitTime = hitObjects[i].startTime;
 
-        scoreAndCombo = scoreAndCombo.concat(mergeSliderScoreCombo(sliderResults.sliderScore, sliderResults.sliderCombo, hitObjects[i]))
-
+        // merge slider score and combo w/ tick time and concat to scoreAndCombo
+        scoreAndCombo = scoreAndCombo.concat(mergeSliderScoreCombo(sliderResults.sliderScore, sliderResults.sliderCombo, hitObjects[i]));
       } else if (hitObjects[i].objectName === 'spinner') {
-        const currScore = calculateSpinnerScore(hitObjects[i], cursorStatus)
-        hitObjects[i].objectScore = currScore;
-        totalScore += getHitScore(currScore, combo);
-        if (currScore > 0) combo += 1;
+        // TODO: check if total spins required is integer or not
+        const requiredSpins = HitObjectCalc.getRequiredSpins(overallDifficulty, (hitObjects[i].endTime - hitObjects[i].startTime) / 1000);
+        const spinResult = calculateSpinnerScore(hitObjects[i], replayData, requiredSpins);
+
+        hitObjects[i].objectScore = spinResult.score;
+        hitObjects[i].spinCompletionTime = spinResult.spinCompletionTime;
+
+        const spinnerScoreAndCombo = getSpinnerScoreAndCombo(hitObjects[i], requiredSpins, combo, totalScore);
+
+        // assign post-spinner score and combo
+        totalScore = spinnerScoreAndCombo[spinnerScoreAndCombo.length - 1][1];
+        if (spinResult.score > 0) ++combo;
+        else combo = 0;
 
         // don't know how to calculate spinners yet, so just set currHitTime to startTime
         currHitTime = hitObjects[i].startTime;
 
-        scoreAndCombo.push([hitObjects[i].endTime, totalScore, combo])
+        // concat spinner time/score/combo to scoreAndCombo
+        scoreAndCombo = scoreAndCombo.concat(spinnerScoreAndCombo);
       } else throw new Error ("Object isn't a circle, slider or spinner??")
     }
     return scoreAndCombo;

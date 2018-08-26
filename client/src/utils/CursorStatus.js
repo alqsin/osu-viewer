@@ -28,7 +28,7 @@ function interpretReplayData(replayData) {
         totalTime: totalTime,
         x: parseFloat(currPoint[1]),
         y: parseFloat(currPoint[2]),
-        keyPressedBitwise: parseInt(currPoint[3], 10),
+        keys: parseInt(currPoint[3], 10),
       }
     )
   }
@@ -53,7 +53,7 @@ class CursorStatus {
     if (currPos == null) {
       return {x: null, y: null, keys: null}
     }
-    return {x: currPos.x, y: currPos.y, keys: currPos.keyPressedBitwise}
+    return {x: currPos.x, y: currPos.y, keys: currPos.keys}
   }
 
 }
