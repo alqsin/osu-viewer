@@ -16,6 +16,10 @@ function scalePoints(points,windowScale){
 class OsuSlider extends React.Component {
   // props are linearizedPoints, ticks, curveType, repeatCount, newCombo, startTime, endTime, currTime, windowScale, circleSize, approachRate, overallDifficulty,
   // objectScore, msVelocity
+  constructor(props) {
+    super(props);
+    this.objectIsRendered = false;
+  }
   state = {
     fadeInStart: 0,
     fadeInEnd: 0,
@@ -23,8 +27,17 @@ class OsuSlider extends React.Component {
     linearizedPoints: null,
     hitDisplayTime: 350,
   }
-  shouldComponentUpdate() {
-    return this.props.currTime >= this.state.fadeInStart && this.props.currTime <= this.props.endTime + this.state.hitDisplayTime;
+  objectShouldRender = (currTime) => {
+    return (currTime >= this.state.fadeInStart && currTime <= this.props.endTime + this.state.hitDisplayTime && currTime > 0);
+  }
+  shouldComponentUpdate(nextProps) {
+    if (!this.objectShouldRender(nextProps.currTime)) {
+      if (this.objectIsRendered) {
+        return true;
+      }
+      return false;
+    }
+    return true;
   }
   componentDidMount() {
     this.setState({
@@ -34,7 +47,12 @@ class OsuSlider extends React.Component {
     })
   }
   render() {
-    if (this.props.currTime < this.state.fadeInStart || this.props.currTime > this.props.endTime + this.state.hitDisplayTime || this.props.currTime <= 0) return null;
+    if (!this.objectShouldRender(this.props.currTime)) {
+      this.objectIsRendered = false;
+      return null;
+    }
+    if (!this.objectIsRendered) this.objectIsRendered = true;
+
     const opacity = HitObjectCalc.getOpacity(this.props.currTime,this.state.fadeInStart,this.state.fadeInEnd);
     let sliderColor = 'green';
     let i=0;

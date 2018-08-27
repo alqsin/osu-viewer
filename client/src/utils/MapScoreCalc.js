@@ -158,7 +158,7 @@ function calculateSpinnerScore(spinner, replayData, requiredSpins) {
   var spinCompletionTime = [];
   var totalRadians = 0;
   var spinsCompleted = 0;
-  const indStart = binarySearchMinIndex(replayData, spinner.startTime, 0, replayData.length - 1);
+  const indStart = binarySearchMinIndex(replayData, spinner.startTime, 1, replayData.length - 1);
   var currentlySpinning = anyKeyPressed(replayData[indStart].keys);
 
   for (let i = indStart + 1; replayData[i].totalTime < spinner.endTime; i++) {

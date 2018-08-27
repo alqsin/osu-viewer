@@ -48,6 +48,7 @@ class MapObjects extends React.Component {
           startTime,
           endTime,
           objectScore,
+          spinCompletionTime,
         }) => (
           <OsuSpinner
             key={++i}
@@ -56,6 +57,8 @@ class MapObjects extends React.Component {
             currTime={this.props.currTime}
             windowScale={this.props.windowScale}
             objectScore={objectScore}
+            spinCompletionTime={spinCompletionTime}
+            overallDifficulty={this.props.mapData.OverallDifficulty}
           />
         ))}
         {this.state.sliders.map(({

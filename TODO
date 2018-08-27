@@ -17,6 +17,8 @@ improve sounds
   add sounds besides music
 import material design icon stylesheet in a better place
 structure project better
+remove use of componentWillMount (marked as UNSAFE in React)
+create "object" class for sliders, spinners and circles
 
 EVENTUALLY
 optimize rendering
@@ -27,7 +29,8 @@ add actual graphics
 add mods
 serve react app with node (put build folder into node app I guess?)
 add caching of replays (verify that score hasn't changed on api request)
-add hp bar and circular time indicator
+add hp bar, circular time indicator and accuracy
+add score screen (at time=end or separate?)
 
 LOW PRIORITY
 improve/simplify/condense calculation process
@@ -39,3 +42,4 @@ music
   fails to play while alt tabbed
   errors when time is changed while autoplay is off (buffering issue?)
 some sliders render strangely
+sliders appear to increment by 2 at second to last tick

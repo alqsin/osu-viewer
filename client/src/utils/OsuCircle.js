@@ -5,6 +5,10 @@ import OsuHitText from './OsuHitText.js'
 
 class OsuCircle extends React.Component {
   // props are x, y, startTime, currTime, windowScale, circleSize, approachRate, overallDifficulty, objectScore, objectHitAt
+  constructor(props) {
+    super(props);
+    this.objectIsRendered = false;
+  }
   state = {
     // this hopefully won't break b/c setState is called after mount
     fadeInStart: 0,
@@ -13,8 +17,18 @@ class OsuCircle extends React.Component {
     circleRadius: 0,
     hitDisplayTime: 350,
   }
-  shouldComponentUpdate() {
-    return this.props.currTime >= this.state.fadeInStart && this.props.currTime <= this.props.objectHitAt + this.state.hitDisplayTime;
+  objectShouldRender = (currTime) => {
+    return (currTime >= this.state.fadeInStart && currTime <= this.props.objectHitAt + this.state.hitDisplayTime && currTime > 0);
+  }
+  shouldComponentUpdate(nextProps) {
+    if (nextProps.currTime === this.props.currTime) return false;
+    if (!this.objectShouldRender(nextProps.currTime)) {
+      if (this.objectIsRendered) {
+        return true;
+      }
+      return false;
+    }
+    return true;
   }
   componentDidMount() {
     this.setState({
@@ -24,9 +38,15 @@ class OsuCircle extends React.Component {
       circleRadius: HitObjectCalc.getCircleRadius(this.props.circleSize),
       }
     )
+    this.objectIsRendered = true;
   }
   render() {
-    if (this.props.currTime < this.state.fadeInStart || this.props.currTime > this.props.objectHitAt + this.state.hitDisplayTime || this.props.currTime <= 0) return null;
+    if (!this.objectShouldRender(this.props.currTime)) {
+      this.objectIsRendered = false;
+      return null;
+    }
+    if (!this.objectIsRendered) this.objectIsRendered = true;
+
     const opacity = HitObjectCalc.getOpacity(this.props.currTime,this.state.fadeInStart,this.state.fadeInEnd);
     return (
       <Group>
