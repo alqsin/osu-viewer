@@ -68,8 +68,7 @@ function checkSingleTick(currCursorPos, tickX, tickY, tickRadius) {
 
 function calculateSliderTicksHit(slider, cursorStatus, timingPoint, circleSize) {
   // returns two arrays, one with a set of the slider ticks hit and one with the time of each slider hit
-  // TODO: tickTime is probably not useful, remove later
-  const tickRadius = HitObjectCalc.getCircleRadius(circleSize) * 2.4;  // this is massive, need to test to see if it's right
+  const tickRadius = HitObjectCalc.getCircleRadius(circleSize) * 2.4;  // apparently this is pretty close to correct
   const beatLength = timingPoint.beatLength;
   const finalTickLength = slider.duration - beatLength * (slider.ticks.length-1);
   let numRepeats = slider.repeatCount;
@@ -124,7 +123,7 @@ function calculateSliderTicksHit(slider, cursorStatus, timingPoint, circleSize) 
     }
   }
 
-  return {tickResult: tickResult, tickTime: tickTime};
+  return {tickResult, tickTime};
 }
 
 function calculateRadianChange(x1, y1, x2, y2) {
@@ -221,14 +220,15 @@ function getSliderComboAndScore(slider, currCombo, totalScore) {
   // returns sliderCombo and sliderScore, both arrays of length slider.ticksHit.length + 2
   var sliderCombo = [];
   var sliderScore = [];
-  let tickMissed = false;
-  let endMissed = false;
+  let partsMissed = 0;
+  const totalParts = 1 + slider.ticksHit.length;
 
   if (slider.wasHit) {
     totalScore += getHitScore(30, currCombo);
     currCombo += 1;
   }
   else {
+    ++partsMissed;
     currCombo = 0;
   }
   sliderCombo.push(currCombo);
@@ -240,7 +240,7 @@ function getSliderComboAndScore(slider, currCombo, totalScore) {
       currCombo += 1;
     }
     else {
-      tickMissed = true;
+      ++partsMissed;
       currCombo = 0;
     }
     sliderCombo.push(currCombo)
@@ -253,23 +253,20 @@ function getSliderComboAndScore(slider, currCombo, totalScore) {
     currCombo += 1;
   }
   else {
-    endMissed = true;
+    ++partsMissed;
   }
   sliderCombo.push(currCombo);
   sliderScore.push(totalScore);
 
-  // I honestly have no idea what the criteria for slider score is, just winging it
+  // this is vaguely related to the actual criteria for slider score
   let sliderHitScore = 0;
-  if (!endMissed && !tickMissed && slider.wasHit) {
+  if (partsMissed === 0) {
     sliderHitScore = 300;
   }
-  else if (!endMissed && !tickMissed) {
+  else if (partsMissed <= 0.5 * totalParts) {
     sliderHitScore = 100;
   }
-  else if (slider.wasHit && (!endMissed || !tickMissed)) {
-    sliderHitScore = 100;
-  }
-  else if (slider.wasHit || !endMissed || !tickMissed) {
+  else if (partsMissed < totalParts) {
     sliderHitScore = 50;
   }
   else sliderHitScore = 0;
@@ -306,12 +303,12 @@ function mergeSliderScoreCombo(sliderScore, sliderCombo, slider) {
   // initial hit
   result.push([slider.startTime, sliderScore[0], sliderCombo[0]]);
 
-  // slider ticks, except final
+  // slider ticks, except "hit" tick w/ objectScore factored in
   for (let i=0;i<sliderScore.length-2;i++) {
     result.push([slider.ticksHitTime[i], sliderScore[i+1], sliderCombo[i+1]]);
   }
 
-  // final tick
+  // "hit" tick
   result.push([slider.endTime, sliderScore[sliderScore.length-1], sliderCombo[sliderCombo.length-1]]);
 
   return result;
@@ -408,7 +405,7 @@ class MapScoreCalc {
       mapData.hitObjects[i].beatLength = timingPoint.beatLength;
   
       // recalculate the duration properly
-      mapData.hitObjects[i].duration = mapData.hitObjects[i].pixelLength * timingPoint.beatLength / (100.0 * mapData.SliderMultiplier)
+      mapData.hitObjects[i].duration = mapData.hitObjects[i].pixelLength * timingPoint.beatLength / (100.0 * mapData.SliderMultiplier) / timingPoint.velocity;
     } 
   }
 }

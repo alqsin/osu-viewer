@@ -42,4 +42,3 @@ music
   fails to play while alt tabbed
   errors when time is changed while autoplay is off (buffering issue?)
 some sliders render strangely
-sliders appear to increment by 2 at second to last tick
