@@ -1,10 +1,10 @@
 import React from 'react';
-import CursorStatus from './CursorStatus.js';
-import TimeKeeper from './TimeKeeper.js';
-import TimeSlider from './TimeSlider.js';
+import CursorStatus from './Calc/CursorStatus.js';
+import TimeKeeper from './Time/TimeKeeper.js';
+import TimeSlider from './Time/TimeSlider.js';
 import OsuWindow from './OsuWindow.js';
-import MapScoreCalc from './MapScoreCalc.js';
-import SongPlayer from './SongPlayer.js';
+import MapScoreCalc from './Calc/MapScoreCalc.js';
+import SongPlayer from './Sound/SongPlayer.js';
 
 class Viewer extends React.Component {
   state = {

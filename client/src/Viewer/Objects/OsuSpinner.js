@@ -1,7 +1,7 @@
 import React from 'react';
 import {Circle, Group, Text} from 'react-konva';
 import OsuHitText from './OsuHitText.js';
-import HitObjectCalc from './HitObjectCalc.js';
+import HitObjectCalc from './../Calc/HitObjectCalc.js';
 
 const binarySearchSpinTime = (d, t, s, e) => {
   const m = Math.floor((s + e)/2);

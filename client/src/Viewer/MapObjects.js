@@ -1,8 +1,8 @@
 import React from 'react';
 import { Group } from 'react-konva';
-import OsuCircle from './OsuCircle.js'
-import OsuSlider from './OsuSlider.js'
-import OsuSpinner from './OsuSpinner.js'
+import OsuCircle from './Objects/OsuCircle.js'
+import OsuSlider from './Objects/OsuSlider.js'
+import OsuSpinner from './Objects/OsuSpinner.js'
 
 function collectObjects(hitObjects) {
   // go through hitObjects and collect each type of object into

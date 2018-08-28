@@ -1,6 +1,6 @@
 import React from 'react';
 import {Circle, Group} from 'react-konva';
-import HitObjectCalc from './HitObjectCalc.js'
+import HitObjectCalc from './../Calc/HitObjectCalc.js'
 import OsuHitText from './OsuHitText.js'
 
 class OsuCircle extends React.Component {

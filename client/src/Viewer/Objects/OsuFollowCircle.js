@@ -1,6 +1,6 @@
 import React from 'react';
 import {Circle} from 'react-konva';
-import {interpolate} from './CurveCalc.js';
+import {interpolate} from './../Calc/CurveCalc.js';
 
 const binarySearchLower = (d, t, s, e) => {
   const m = Math.floor((s + e)/2);

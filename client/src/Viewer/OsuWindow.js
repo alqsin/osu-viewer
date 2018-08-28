@@ -1,8 +1,8 @@
 import React from 'react';
 import {Stage,Layer,Rect} from 'react-konva';
-import Cursor from './Cursor.js';
+import Cursor from './Objects/Cursor.js';
 import MapObjects from './MapObjects.js';
-import OsuScore from './OsuScore.js';
+import OsuScore from './Text/OsuScore.js';
 
 class OsuWindow extends React.Component {
   render(){

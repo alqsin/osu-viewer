@@ -1,7 +1,7 @@
 import React from 'react';
 import {Line, Rect, Group} from 'react-konva';
 import OsuApproachCircle from './OsuApproachCircle.js';
-import HitObjectCalc from './HitObjectCalc.js';
+import HitObjectCalc from './../Calc/HitObjectCalc.js';
 import OsuHitText from './OsuHitText.js';
 import OsuFollowCircle from './OsuFollowCircle.js';
 
