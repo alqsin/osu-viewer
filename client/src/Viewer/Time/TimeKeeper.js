@@ -58,6 +58,7 @@ class TimeKeeper extends React.Component {
         toggleAutoplay: this.toggleAutoplay,
       },
       autoplay: this.state.autoplay,
+      timeSpeed: this.state.timeSpeed,
     }
 
     return this.props.render(renderProps)

@@ -19,6 +19,7 @@ class SongPlayer extends React.Component {
         onLoad={this.props.timeControls.startAutoplay}
         onPause={() => this.setState({position: this.props.currTime})}
         autoLoad={true}
+        playbackRate={this.props.timeSpeed}
       />
     )
   }

@@ -95,7 +95,7 @@ class Viewer extends React.Component {
       <TimeKeeper
         totalTime = {totalReplayLength}
         cursorStatus = {this.state.cursorStatus}
-        render={({currTime,currCursorPos,timeControls,autoplay}) =>
+        render={({ currTime,currCursorPos,timeControls,autoplay,timeSpeed }) =>
           <div>
             <TimeSlider 
               currTime={currTime}
@@ -118,6 +118,7 @@ class Viewer extends React.Component {
               timeControls={timeControls}
               beatmapId={this.props.beatmapId}
               autoplay={autoplay}
+              timeSpeed={timeSpeed}
             />
           </div>
         }
