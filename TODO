@@ -2,13 +2,8 @@ SOON
 add slider repeat indicator
 add combo colors and numbers
 add slider/circle borders
-create better spinner graphics?
-determine proper approach circle radius
-determine exact follow circle radius
-add 477 rpm limit for spinning
 verify score calculation by fetching score via api
 incorporate difficulty into score calculation
-add api module which controls rate limit
 add initialization of replay names to ids
 add api request validation
 improve sounds
@@ -16,9 +11,9 @@ improve sounds
   sync music and time properly
   add sounds besides music
 import material design icon stylesheet in a better place
-structure project better
 remove use of componentWillMount (marked as UNSAFE in React)
 create "object" class for sliders, spinners and circles
+status describing player/beatmap
 
 EVENTUALLY
 optimize rendering
@@ -31,11 +26,21 @@ serve react app with node (put build folder into node app I guess?)
 add caching of replays (verify that score hasn't changed on api request)
 add hp bar, circular time indicator and accuracy
 add score screen (at time=end or separate?)
+improve rate limiting
+  add status (waiting for rate limit)
+  make sure api call doesn't timeout
 
 LOW PRIORITY
 improve/simplify/condense calculation process
   slider final tick shouldn't render
   either add ticks twice length of sliders or method-ize forward/reverse calculation (+ last tick) to not need to do it twice
+determine proper approach circle radius
+determine exact follow circle radius
+spinner improvements
+  477 rpm limit
+  figure out exactly how OD => spins required (50, 100, 300)
+  spinning graphic
+  display current rate
 
 BUGS
 music
