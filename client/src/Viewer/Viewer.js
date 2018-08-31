@@ -16,7 +16,6 @@ class Viewer extends React.Component {
     scoreData: null,
   }
   callApi = async (beatmapId, username) => {
-    // const response = await fetch('api/252238/cookiezi');
     const response = await fetch('api/replays/' + beatmapId + '/' + username);
     const body = await response.json();
   
@@ -65,6 +64,7 @@ class Viewer extends React.Component {
     })
   }
   componentDidMount() {
+    // do necessary hit object calculations and assign score data to state
     this.callApi(this.props.beatmapId, this.props.player)
       .then(res => {
         const replayData = res.replayData;

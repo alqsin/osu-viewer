@@ -181,7 +181,7 @@ function calculateSpinnerScore(spinner, replayData, requiredSpins) {
   let score = 0;
 
   // TODO: check requirements for spinner completion
-  if (spinsCompleted > requiredSpins) {
+  if (spinsCompleted < requiredSpins) {
     if (spinsCompleted > requiredSpins - 2) score = 100;
     else if (requiredSpins > 0.5 > requiredSpins - 4) score = 50;
   }

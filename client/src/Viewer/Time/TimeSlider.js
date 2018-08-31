@@ -38,7 +38,6 @@ class TimeSlider extends React.PureComponent {
       height: 25,
       float: 'left',
     }
-
     return (
       <div style={headerDivStyle}>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
@@ -51,7 +50,7 @@ class TimeSlider extends React.PureComponent {
             autoplay={this.props.autoplay}
           />
         </div>
-        <div style={sliderDivStyle}>  
+        <div style={sliderDivStyle}>
           <Slider
             min={0}
             max={Math.ceil(this.props.totalTime * 10) * 100} // makes it so max-min % step = 0
