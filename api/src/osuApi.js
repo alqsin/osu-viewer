@@ -65,6 +65,7 @@ function requestBeatmapScores(beatmapId, cb) {
   const urlParams = {
     k: process.env.OSU_API_KEY,
     m: '0',
+    mods: '0',
     b: beatmapId,
   }
 
