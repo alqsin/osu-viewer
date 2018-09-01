@@ -5,6 +5,7 @@ import TimeSlider from './Time/TimeSlider.js';
 import OsuWindow from './OsuWindow.js';
 import MapScoreCalc from './Calc/MapScoreCalc.js';
 import SongPlayer from './Sound/SongPlayer.js';
+import VolumeControls from './Sound/VolumeControls.js';
 
 class Viewer extends React.Component {
   state = {
@@ -14,6 +15,8 @@ class Viewer extends React.Component {
     dataLoaded: false,
     cursorStatus: null,
     scoreData: null,
+    volume: 10,
+    muted: false,
   }
   callApi = async (beatmapId, username) => {
     const response = await fetch('api/replays/' + beatmapId + '/' + username);
@@ -71,7 +74,14 @@ class Viewer extends React.Component {
         const beatmapData = res.beatmapData;
         const cursorStatus = new CursorStatus(replayData);
         const scoreData = this.updateMapData(beatmapData, cursorStatus);
-        this.setState({dataLoaded: true, mapData: beatmapData, replayData: replayData, cursorStatus: cursorStatus, scoreData: scoreData});
+        this.setState({
+          dataLoaded: true,
+          mapData: beatmapData,
+          replayData: replayData,
+          cursorStatus: cursorStatus,
+          scoreData: scoreData,
+          totalReplayLength: 1.0 * cursorStatus.getReplayLength() / 1000,
+        });
       })
       .catch(err => console.log(err));
     
@@ -90,21 +100,34 @@ class Viewer extends React.Component {
         </div>
       )
     }
-    const totalReplayLength = 1.0 * this.state.cursorStatus.getReplayLength() / 1000;
+    const headerDivStyle = {
+      height: 25,
+      width: this.props.windowScale * 640,
+    }
     return (
       <TimeKeeper
-        totalTime = {totalReplayLength}
+        totalTime = {this.state.totalReplayLength}
         cursorStatus = {this.state.cursorStatus}
         render={({ currTime,currCursorPos,timeControls,autoplay,timeSpeed }) =>
           <div>
-            <TimeSlider 
-              currTime={currTime}
-              onChange={timeControls.setCurrTime}
-              totalTime={totalReplayLength}
-              windowScale={this.state.windowScale}
-              autoplay={autoplay}
-              toggleAutoplay={timeControls.toggleAutoplay}
-            />
+            <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+            <div style={headerDivStyle}>
+              <TimeSlider
+                currTime={currTime}
+                onChange={timeControls.setCurrTime}
+                totalTime={this.state.totalReplayLength}
+                windowScale={this.state.windowScale}
+                autoplay={autoplay}
+                toggleAutoplay={timeControls.toggleAutoplay}
+              />
+              <VolumeControls
+                changeVolume={(val) => this.setState({volume: val})}
+                toggleMute={() => this.setState({muted: this.state.muted ? false : true})}
+                muted={this.state.muted}
+                volume={this.state.volume}
+                windowScale={this.state.windowScale}
+              />
+            </div>
             <OsuWindow
               currCursorPos={currCursorPos}
               currTime={currTime}
@@ -119,6 +142,7 @@ class Viewer extends React.Component {
               beatmapId={this.props.beatmapId}
               autoplay={autoplay}
               timeSpeed={timeSpeed}
+              volume={this.state.muted ? 0 : this.state.volume}
             />
           </div>
         }

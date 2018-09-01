@@ -15,15 +15,17 @@ function msToText(ms) {
 
 class TimeSlider extends React.PureComponent {
   render() {
+    // volume slider currently occupies windowScale * 50 + 50 pixels
     const headerDivStyle = {
       height: 25,
-      width: this.props.windowScale * 640,
+      width: this.props.windowScale * 590 - 50,
     }
     const sliderDivStyle = {
-      width: this.props.windowScale * 640 - 90,
+      width: this.props.windowScale * 590 - 90 - 50,
       height: 25,
       marginTop: 5,
-      float: 'right',
+      marginLeft: 10,
+      float: 'left',
     }
     const timeDivStyle = {
       marginLeft: 3,
@@ -39,18 +41,17 @@ class TimeSlider extends React.PureComponent {
       float: 'left',
     }
     return (
-      <div style={headerDivStyle}>
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-        <div style={timeDivStyle}>
+      <span style={headerDivStyle}>
+        <span style={timeDivStyle}>
           {msToText(this.props.currTime)}
-        </div>
-        < div style={controlsDivStyle}>
+        </span>
+        <span style={controlsDivStyle}>
           <TimeControls
             toggleAutoplay={this.props.toggleAutoplay}
             autoplay={this.props.autoplay}
           />
-        </div>
-        <div style={sliderDivStyle}>
+        </span>
+        <span style={sliderDivStyle}>
           <Slider
             min={0}
             max={Math.ceil(this.props.totalTime * 10) * 100} // makes it so max-min % step = 0
@@ -58,8 +59,8 @@ class TimeSlider extends React.PureComponent {
             onChange={this.props.onChange}
             value={this.props.currTime}
           />
-        </div>
-      </div>
+        </span>
+      </span>
     )
   }
 }
