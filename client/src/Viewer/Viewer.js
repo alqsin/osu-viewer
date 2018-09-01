@@ -102,7 +102,7 @@ class Viewer extends React.Component {
     }
     const headerDivStyle = {
       height: 25,
-      width: this.props.windowScale * 640,
+      width: this.state.windowScale * 640,
     }
     return (
       <TimeKeeper
