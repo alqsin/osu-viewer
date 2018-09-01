@@ -79,7 +79,9 @@ module.exports = {
 
     beatmapIO.readBeatmapData(beatmapName, (beatmap) => {
       // should probably verify that beatmap is valid here
-      const beatmapId = beatmap.BeatmapID;
+      var beatmapId = null;
+      if ('BeatmapID' in beatmap) beatmapId = beatmap.BeatmapID;
+      else beatmapId = beatmapName; // default to beatmap name if no BeatmapID; need to clean this later
       requestReplayData(beatmapId, user, (replayResponse) => {
         decodeReplayData(JSON.parse(replayResponse).content, (replayData) => {
           res.send({replayData: replayData, beatmapData: beatmap})

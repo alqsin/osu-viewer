@@ -388,7 +388,7 @@ class MapScoreCalc {
       mapData.hitObjects[i].points = [].concat.apply([], mapData.hitObjects[i].points)
   
       // for each type of slider, use a different process
-      if (mapData.hitObjects[i].curveType === "linear") {
+      if (mapData.hitObjects[i].curveType === "linear" || mapData.hitObjects[i].points.length === 4) {
         mapData.hitObjects[i].linearizedPoints = CurveCalc.linearCorrectPathLength(mapData.hitObjects[i].points, mapData.hitObjects[i].pixelLength)
       } else if (mapData.hitObjects[i].curveType === "bezier" || mapData.hitObjects[i].points.length > 6) {
         mapData.hitObjects[i].linearizedPoints = CurveCalc.linearizeBezier(mapData.hitObjects[i].points, mapData.hitObjects[i].pixelLength)

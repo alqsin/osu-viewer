@@ -7,10 +7,8 @@ incorporate difficulty into score calculation
 add initialization of replay names to ids
 add api request validation
 improve sounds
-  add volume control
   sync music and time properly
   add sounds besides music
-import material design icon stylesheet in a better place
 remove use of componentWillMount (marked as UNSAFE in React)
 create "object" class for sliders, spinners and circles
 status describing player/beatmap
@@ -41,9 +39,11 @@ spinner improvements
   figure out exactly how OD => spins required (50, 100, 300)
   spinning graphic
   display current rate
+adjust size of map selection boxes and improve scaling for very small windows
 
 BUGS
 music
   fails to play while alt tabbed
   errors when time is changed while autoplay is off (buffering issue?)
 some sliders render strangely
+can't enforce retrieval of nomod replay
