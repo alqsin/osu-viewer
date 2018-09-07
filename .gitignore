@@ -9,6 +9,7 @@
 /client/build
 
 # misc
+.vscode
 .DS_Store
 .env
 .env.local

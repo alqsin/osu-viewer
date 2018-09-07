@@ -20,7 +20,7 @@ function collectObjects(hitObjects) {
     } else console.log("Unknown type of hitObject: " + hitObjects[i].objectName)
 
   }
-  return {circles: circleArray, sliders: sliderArray, spinners: spinnerArray};
+  return {circles: circleArray, sliders: sliderArray, spinners: spinnerArray, objectsLoaded: true};
 }
 
 class MapObjects extends React.Component {
@@ -36,7 +36,6 @@ class MapObjects extends React.Component {
   componentWillMount() {
     // get circles sliders and spinners after assigning object hits/scores
     this.setState(collectObjects(this.props.mapData.hitObjects));
-    this.setState({objectsLoaded: true});
   }
 
   render() {
