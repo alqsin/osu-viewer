@@ -37,19 +37,21 @@ const binarySearchMinIndex = (d, t, s, e) => {
   return binarySearchMinIndex(d,t,s,m);
 }
 
-function calculateCircleScore(circle, replayData, circleSize, overallDifficulty, prevHitTime) {
+function calculateCircleScore(circle, replayData, circleSize, overallDifficulty, prevHitTime, mods) {
   // looks through replayData and determines whether or not circle was hit, returning an array containing score and time of hit
   // if object is never hit, just send circle fade out time as time of hit
-  const window50 = HitObjectCalc.getHitWindow(overallDifficulty);
-  const window100 = HitObjectCalc.get100Window(overallDifficulty);
-  const window300 = HitObjectCalc.get300Window(overallDifficulty);
-  const circleRadius = HitObjectCalc.getCircleRadius(circleSize);
+  const window50 = HitObjectCalc.getHitWindow(overallDifficulty, mods);
+  const window100 = HitObjectCalc.get100Window(overallDifficulty, mods);
+  const window300 = HitObjectCalc.get300Window(overallDifficulty, mods);
+  const circleRadius = HitObjectCalc.getCircleRadius(circleSize, mods);
+
   let searchStartTime = circle.startTime - window50;
   if (prevHitTime + 1 > searchStartTime) searchStartTime = prevHitTime + 1;
-  const indStart = binarySearchMinIndex(replayData,searchStartTime,1,replayData.length-1); // use the fact that nothing happens at time 0 of replay
-  for (let i=indStart;replayData[i].totalTime<=circle.startTime + window50;i++){
-    if (checkNewKeyPress(replayData[i-1].keys,replayData[i].keys)){
-      if (checkCursorInRadius(replayData[i].x,replayData[i].y,circle.position[0],circle.position[1],circleRadius)) {
+  const indStart = binarySearchMinIndex(replayData, searchStartTime, 1, replayData.length-1); // use the fact that nothing happens at time 0 of replay
+
+  for (let i=indStart; replayData[i].totalTime<=circle.startTime + window50; i++){
+    if (checkNewKeyPress(replayData[i-1].keys, replayData[i].keys)){
+      if (checkCursorInRadius(replayData[i].x, replayData[i].y, circle.position[0], circle.position[1], circleRadius)) {
         const hitDelta = Math.abs(replayData[i].totalTime - circle.startTime);
         if (hitDelta <= window300) return [300,replayData[i].totalTime];
         if (hitDelta <= window100) return [100,replayData[i].totalTime];
@@ -66,9 +68,9 @@ function checkSingleTick(currCursorPos, tickX, tickY, tickRadius) {
   return false;
 }
 
-function calculateSliderTicksHit(slider, cursorStatus, timingPoint, circleSize) {
+function calculateSliderTicksHit(slider, cursorStatus, timingPoint, circleSize, mods) {
   // returns two arrays, one with a set of the slider ticks hit and one with the time of each slider hit
-  const tickRadius = HitObjectCalc.getCircleRadius(circleSize) * 2.4;  // apparently this is pretty close to correct
+  const tickRadius = HitObjectCalc.getCircleRadius(circleSize, mods) * 2.4;  // apparently this is pretty close to correct
   const beatLength = timingPoint.beatLength;
   const finalTickLength = slider.duration - beatLength * (slider.ticks.length-1);
   let numRepeats = slider.repeatCount;
@@ -81,7 +83,7 @@ function calculateSliderTicksHit(slider, cursorStatus, timingPoint, circleSize) 
     // if going in forward direction, just go from start tick to end tick
     if (forward) {
       for (let i=0; i<slider.ticks.length-1;i++) {
-        tickResult.push(checkSingleTick(cursorStatus.posAt(currTime), slider.ticks[i][0], slider.ticks[i][1], tickRadius));
+        tickResult.push(checkSingleTick(cursorStatus.posAt(currTime), slider.ticks[i][0], slider.ticks[i][1], tickRadius, mods));
 
         tickTime.push(currTime);
         currTime += beatLength;
@@ -93,7 +95,7 @@ function calculateSliderTicksHit(slider, cursorStatus, timingPoint, circleSize) 
       // apparently slider ends are calculated 36 ms early
       if (numRepeats === 1) currTime -= 36;
 
-      tickResult.push(checkSingleTick(cursorStatus.posAt(currTime), slider.ticks[slider.ticks.length-1][0], slider.ticks[slider.ticks.length-1][1], tickRadius));
+      tickResult.push(checkSingleTick(cursorStatus.posAt(currTime), slider.ticks[slider.ticks.length-1][0], slider.ticks[slider.ticks.length-1][1], tickRadius, mods));
 
       tickTime.push(currTime);
       currTime += finalTickLength;
@@ -104,7 +106,7 @@ function calculateSliderTicksHit(slider, cursorStatus, timingPoint, circleSize) 
     // if going in backwards direction, go from second to last tick to origin
     else {
       for (let i=slider.ticks.length-2;i>=0;i--) {
-        tickResult.push(checkSingleTick(cursorStatus.posAt(currTime), slider.ticks[i][0], slider.ticks[i][1], tickRadius));
+        tickResult.push(checkSingleTick(cursorStatus.posAt(currTime), slider.ticks[i][0], slider.ticks[i][1], tickRadius, mods));
 
         tickTime.push(currTime);
         currTime += beatLength;
@@ -113,7 +115,7 @@ function calculateSliderTicksHit(slider, cursorStatus, timingPoint, circleSize) 
       if (numRepeats === 1) currTime -= 36;
 
       // check origin tick
-      tickResult.push(checkSingleTick(cursorStatus.posAt(currTime), slider.linearizedPoints[0], slider.linearizedPoints[1], tickRadius));
+      tickResult.push(checkSingleTick(cursorStatus.posAt(currTime), slider.linearizedPoints[0], slider.linearizedPoints[1], tickRadius, mods));
       
       tickTime.push(currTime);
       currTime += beatLength;
@@ -315,7 +317,13 @@ function mergeSliderScoreCombo(sliderScore, sliderCombo, slider) {
 }
 
 class MapScoreCalc {
-  static assignObjectHits(hitObjects, cursorStatus, circleSize, overallDifficulty, timingPoints) {
+  static assignObjectHits(mapData, cursorStatus, mods) {
+    // assign names for mapData objects
+    var hitObjects = mapData.hitObjects;
+    var circleSize = mapData.CircleSize;
+    var overallDifficulty = mapData.OverallDifficulty;
+    var timingPoints = mapData.timingPoints;
+
     let scoreAndCombo = [[0,0,0]]; // array of triplets with time, score, combo
     let currHitTime = 0;
     const replayData = cursorStatus.getReplayData()
@@ -323,7 +331,7 @@ class MapScoreCalc {
     let totalScore = 0;
     for (let i=0;i<hitObjects.length;i++){
       if (hitObjects[i].objectName === 'circle') {
-        const currScore = calculateCircleScore(hitObjects[i],replayData,circleSize,overallDifficulty,currHitTime);
+        const currScore = calculateCircleScore(hitObjects[i], replayData, circleSize, overallDifficulty, currHitTime, mods);
         hitObjects[i].objectScore = currScore[0];
         hitObjects[i].objectHitAt = currScore[1];
         currHitTime = currScore[1];
@@ -334,10 +342,11 @@ class MapScoreCalc {
 
         // append scoreAndCombo with current hit result
         scoreAndCombo.push([currHitTime, totalScore, combo]);
+
       } else if (hitObjects[i].objectName === 'slider') {
-        const currScore = calculateCircleScore(hitObjects[i],replayData,circleSize,overallDifficulty,currHitTime);
+        const currScore = calculateCircleScore(hitObjects[i], replayData, circleSize, overallDifficulty, currHitTime, mods);
         const currTimingPoint = CurveCalc.getSliderTimingPoint(hitObjects[i].startTime, timingPoints);
-        const ticksHit = calculateSliderTicksHit(hitObjects[i], cursorStatus, currTimingPoint, circleSize);
+        const ticksHit = calculateSliderTicksHit(hitObjects[i], cursorStatus, currTimingPoint, circleSize, mods);
         hitObjects[i].ticksHit = ticksHit.tickResult;
         hitObjects[i].ticksHitTime = ticksHit.tickTime;
         if (currScore[0] > 0) hitObjects[i].wasHit = true;
@@ -353,9 +362,10 @@ class MapScoreCalc {
 
         // merge slider score and combo w/ tick time and concat to scoreAndCombo
         scoreAndCombo = scoreAndCombo.concat(mergeSliderScoreCombo(sliderResults.sliderScore, sliderResults.sliderCombo, hitObjects[i]));
+        
       } else if (hitObjects[i].objectName === 'spinner') {
         // TODO: check if total spins required is integer or not
-        const requiredSpins = HitObjectCalc.getRequiredSpins(overallDifficulty, (hitObjects[i].endTime - hitObjects[i].startTime) / 1000);
+        const requiredSpins = HitObjectCalc.getRequiredSpins(overallDifficulty, (hitObjects[i].endTime - hitObjects[i].startTime) / 1000, mods);
         const spinResult = calculateSpinnerScore(hitObjects[i], replayData, requiredSpins);
 
         hitObjects[i].objectScore = spinResult.score;
@@ -407,6 +417,34 @@ class MapScoreCalc {
       // recalculate the duration properly
       mapData.hitObjects[i].duration = mapData.hitObjects[i].pixelLength * timingPoint.beatLength / (100.0 * mapData.SliderMultiplier) / timingPoint.velocity;
     } 
+  }
+
+  static adjustMapSpeed (mapData, multiplier) {
+    // adjust the timing points
+    for (let i = 0; i < mapData.timingPoints.length; i++) {
+      mapData.timingPoints[i].offset /= multiplier;
+      mapData.timingPoints[i].beatLength /= multiplier;
+      mapData.timingPoints[i].bpm *= multiplier;
+    }
+
+    // adjust the hit objects
+    for (let i = 0; i < mapData.hitObjects.length; i++) {
+      mapData.HitObjects[i].startTime /= multiplier;
+      if ("endTime" in mapData.HitObjects[i]) mapData.HitObjects[i].endTime /= multiplier;
+      
+    }
+  }
+
+  static invertHitObjects (hitObjects) {
+    // go through hitObjects and invert everything (across x axis)
+    for (let i = 0; i < hitObjects.length; i++) {
+      hitObjects[i].position[1] = 384 - hitObjects[i].position[1];
+      if ("points" in hitObjects[i]) {
+        for (let j = 0; j < hitObjects[i].points.length; j++) {
+          hitObjects[i].points[j][1] = 384 - hitObjects[i].points[j][1];
+        }
+      }
+    }
   }
 }
 

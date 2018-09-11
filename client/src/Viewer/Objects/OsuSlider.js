@@ -41,9 +41,12 @@ class OsuSlider extends React.Component {
   }
   componentDidMount() {
     this.setState({
-      fadeInStart: this.props.startTime - HitObjectCalc.getPreTime(this.props.approachRate),
-      fadeInEnd: this.props.startTime - HitObjectCalc.getPreTime(this.props.approachRate) + HitObjectCalc.getFadeInTime(this.props.approachRate),
-      sliderWidth: HitObjectCalc.getCircleRadius(this.props.circleSize) * 2,
+      fadeInStart: this.props.startTime - HitObjectCalc.getPreTime(this.props.approachRate, this.props.mods),
+      fadeInEnd: (this.props.startTime 
+        - HitObjectCalc.getPreTime(this.props.approachRate, this.props.mods) 
+        + HitObjectCalc.getFadeInTime(this.props.approachRate, this.props.mods)
+      ),
+      sliderWidth: HitObjectCalc.getCircleRadius(this.props.circleSize, this.props.mods) * 2,
     })
   }
   render() {
@@ -83,7 +86,7 @@ class OsuSlider extends React.Component {
             linearizedPoints={this.props.linearizedPoints}
             msVelocity={this.props.msVelocity}
             opacity={opacity}
-            circleRadius={HitObjectCalc.getCircleRadius(this.props.circleSize)} // OsuFollowCircle calculates its own correct size
+            circleRadius={HitObjectCalc.getCircleRadius(this.props.circleSize, this.props.mods)}
             windowScale={this.props.windowScale}
           />
         }

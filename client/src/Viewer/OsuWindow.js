@@ -23,6 +23,7 @@ class OsuWindow extends React.Component {
             windowScale={this.props.windowScale}
             cursorStatus={this.props.cursorStatus}
             mapData={this.props.mapData}
+            mods={this.props.mods}
           />
           <Cursor
             currPos={this.props.currCursorPos}

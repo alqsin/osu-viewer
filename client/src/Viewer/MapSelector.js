@@ -37,7 +37,7 @@ class MapSelector extends React.Component {
       .then(res => {
         const players = [];
         for (let i=0;i<res.length;i++) {
-          players.push(res[i].username);
+          if (res[i].replay_available) players.push(res[i].username);
         }
         this.setState({beatmapId: value, playerList: players, beatmapSelected: true});
       })

@@ -4,7 +4,7 @@ import HitObjectCalc from './../Calc/HitObjectCalc.js'
 import OsuHitText from './OsuHitText.js'
 
 class OsuCircle extends React.Component {
-  // props are x, y, startTime, currTime, windowScale, circleSize, approachRate, overallDifficulty, objectScore, objectHitAt
+  // props are x, y, startTime, currTime, windowScale, circleSize, approachRate, overallDifficulty, objectScore, objectHitAt, mods,
   constructor(props) {
     super(props);
     this.objectIsRendered = false;
@@ -32,10 +32,13 @@ class OsuCircle extends React.Component {
   }
   componentDidMount() {
     this.setState({
-      fadeInStart: this.props.startTime - HitObjectCalc.getPreTime(this.props.approachRate),
-      fadeInEnd: this.props.startTime - HitObjectCalc.getPreTime(this.props.approachRate) + HitObjectCalc.getFadeInTime(this.props.approachRate),
-      noteEnd: this.props.startTime + HitObjectCalc.getHitWindow(this.props.overallDifficulty),
-      circleRadius: HitObjectCalc.getCircleRadius(this.props.circleSize),
+      fadeInStart: this.props.startTime - HitObjectCalc.getPreTime(this.props.approachRate, this.props.mods),
+      fadeInEnd: (this.props.startTime 
+        - HitObjectCalc.getPreTime(this.props.approachRate, this.props.mods) 
+        + HitObjectCalc.getFadeInTime(this.props.approachRate, this.props.mods)
+      ),
+      noteEnd: this.props.startTime + HitObjectCalc.getHitWindow(this.props.overallDifficulty, this.props.mods),
+      circleRadius: HitObjectCalc.getCircleRadius(this.props.circleSize, this.props.mods),
       }
     )
     this.objectIsRendered = true;

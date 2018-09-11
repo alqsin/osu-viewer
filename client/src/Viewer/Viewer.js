@@ -6,6 +6,7 @@ import OsuWindow from './OsuWindow.js';
 import MapScoreCalc from './Calc/MapScoreCalc.js';
 import SongPlayer from './Sound/SongPlayer.js';
 import VolumeControls from './Sound/VolumeControls.js';
+import ModCalc from './Calc/ModCalc.js';
 
 class Viewer extends React.Component {
   state = {
@@ -17,6 +18,7 @@ class Viewer extends React.Component {
     scoreData: null,
     volume: 10,
     muted: false,
+    mods: null,
   }
   callApi = async (beatmapId, username) => {
     const response = await fetch('api/replays/' + beatmapId + '/' + username);
@@ -26,17 +28,22 @@ class Viewer extends React.Component {
   
     return body;
   }
-  updateMapData = (mapData, cursorStatus) => {
+  updateMapData = (mapData, cursorStatus, mods) => {
+    // if DoubleTime or HalfTime present in mods, adjust timing of entire map
+    if (mods.DoubleTime) MapScoreCalc.adjustMapSpeed(mapData, 1.5);
+    else if (mods.HalfTime) MapScoreCalc.adjustMapSpeed(mapData, 0.75);
+
+    // if HardRock is present in mods, turn map upside-down
+    if (mods.HardRock) MapScoreCalc.invertHitObjects(mapData.hitObjects);
+
     // add linearized points and ticks directly to sliders
     MapScoreCalc.addLinearizedPoints(mapData);
 
     // assign object hits in place, collecting resulting time/score/combo points
     const scoreData = MapScoreCalc.assignObjectHits(
-      mapData.hitObjects,
+      mapData,
       cursorStatus,
-      mapData.CircleSize,
-      mapData.OverallDifficulty,
-      mapData.timingPoints,
+      mods,
     );
 
     // log # of 300s, 100s, 50s, misses
@@ -72,14 +79,16 @@ class Viewer extends React.Component {
       .then(res => {
         const replayData = res.replayData;
         const beatmapData = res.beatmapData;
+        const mods = ModCalc.getMods(res.bitwiseMods);
         const cursorStatus = new CursorStatus(replayData);
-        const scoreData = this.updateMapData(beatmapData, cursorStatus);
+        const scoreData = this.updateMapData(beatmapData, cursorStatus, mods);
         this.setState({
           dataLoaded: true,
           mapData: beatmapData,
           replayData: replayData,
           cursorStatus: cursorStatus,
           scoreData: scoreData,
+          mods: mods,
           totalReplayLength: 1.0 * cursorStatus.getReplayLength() / 1000,
         });
       })
@@ -135,6 +144,7 @@ class Viewer extends React.Component {
               cursorStatus={this.state.cursorStatus}
               scoreData={this.state.scoreData}
               mapData={this.state.mapData}
+              mods={this.state.mods}
             />
             <SongPlayer
               currTime={currTime}

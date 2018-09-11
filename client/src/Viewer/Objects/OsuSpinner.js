@@ -19,7 +19,7 @@ class OsuSpinner extends React.Component {
   }
   state = {
     hitDisplayTime: 350,
-    requiredSpins: HitObjectCalc.getRequiredSpins(this.props.overallDifficulty, (this.props.endTime - this.props.startTime) / 1000),
+    requiredSpins: HitObjectCalc.getRequiredSpins(this.props.overallDifficulty, (this.props.endTime - this.props.startTime) / 1000, this.props.mods),
     spinsCompleted: 0,
     totalSpins: this.props.spinCompletionTime.length,
   }

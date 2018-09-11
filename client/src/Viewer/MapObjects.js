@@ -58,6 +58,7 @@ class MapObjects extends React.Component {
             objectScore={objectScore}
             spinCompletionTime={spinCompletionTime}
             overallDifficulty={this.props.mapData.OverallDifficulty}
+            mods={this.props.mods}
           />
         ))}
         {this.state.sliders.map(({
@@ -88,6 +89,7 @@ class MapObjects extends React.Component {
             repeatCount={repeatCount}
             objectScore={objectScore}
             msVelocity={beatPixelLength / beatLength}
+            mods={this.props.mods}
           />
         ))}
         {this.state.circles.map(({
@@ -110,6 +112,7 @@ class MapObjects extends React.Component {
             newCombo={newCombo}
             objectScore={objectScore}
             objectHitAt={objectHitAt}
+            mods={this.props.mods}
           />
         ))}
       </Group>
