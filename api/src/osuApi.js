@@ -65,11 +65,37 @@ function requestBeatmapScores(beatmapId, cb) {
   const urlParams = {
     k: process.env.OSU_API_KEY,
     m: '0',
-    mods: '0',
     b: beatmapId,
   }
 
   doRequest('https://osu.ppy.sh/api/get_scores',urlParams, cb);
+}
+
+function requestBeatmapPlayerScores(beatmapId, user, cb) {
+  const urlParams = {
+    k: process.env.OSU_API_KEY,
+    m: '0',
+    b: beatmapId,
+    u: user,
+  }
+  
+  doRequest('https://osu.ppy.sh/api/get_scores', urlParams, cb);
+}
+
+function determineMods(playerScores) {
+  // go through playerScores, and return the mods (bitwise) belonging to
+  // the score with the highest PP
+
+  var maxMods = 0;
+  var maxPP = 0;
+
+  for (var score of playerScores) {
+    if (parseFloat(score.pp) > maxPP) {
+      maxMods = parseInt(score.enabled_mods);
+      maxPP = parseFloat(score.pp);
+    }
+  }
+  return maxMods;
 }
 
 module.exports = {
@@ -84,7 +110,10 @@ module.exports = {
       else beatmapId = beatmapName; // default to beatmap name if no BeatmapID; need to clean this later
       requestReplayData(beatmapId, user, (replayResponse) => {
         decodeReplayData(JSON.parse(replayResponse).content, (replayData) => {
-          res.send({replayData: replayData, beatmapData: beatmap})
+          requestBeatmapPlayerScores(beatmapId, user, (playerScores => {
+            bitwiseMods = determineMods(JSON.parse(playerScores));
+            res.send({bitwiseMods: bitwiseMods, replayData: replayData, beatmapData: beatmap})
+          }))
         });
       });
     });
