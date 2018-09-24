@@ -114,7 +114,7 @@ class ModCalc {
 
     return baseBPM;
   }
-  static getSongSpeed (mods) {
+  static getTimeMultiplier (mods) {
     if (mods.DoubleTime) return 1.5;
     else if (mods.HalfTime) return 0.75;
     

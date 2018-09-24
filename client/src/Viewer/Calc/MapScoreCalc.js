@@ -419,22 +419,6 @@ class MapScoreCalc {
     } 
   }
 
-  static adjustMapSpeed (mapData, multiplier) {
-    // adjust the timing points
-    for (let i = 0; i < mapData.timingPoints.length; i++) {
-      mapData.timingPoints[i].offset /= multiplier;
-      mapData.timingPoints[i].beatLength /= multiplier;
-      mapData.timingPoints[i].bpm *= multiplier;
-    }
-
-    // adjust the hit objects
-    for (let i = 0; i < mapData.hitObjects.length; i++) {
-      mapData.HitObjects[i].startTime /= multiplier;
-      if ("endTime" in mapData.HitObjects[i]) mapData.HitObjects[i].endTime /= multiplier;
-      
-    }
-  }
-
   static invertHitObjects (hitObjects) {
     // go through hitObjects and invert everything (across x axis)
     for (let i = 0; i < hitObjects.length; i++) {

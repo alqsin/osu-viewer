@@ -29,10 +29,6 @@ class Viewer extends React.Component {
     return body;
   }
   updateMapData = (mapData, cursorStatus, mods) => {
-    // if DoubleTime or HalfTime present in mods, adjust timing of entire map
-    if (mods.DoubleTime) MapScoreCalc.adjustMapSpeed(mapData, 1.5);
-    else if (mods.HalfTime) MapScoreCalc.adjustMapSpeed(mapData, 0.75);
-
     // if HardRock is present in mods, turn map upside-down
     if (mods.HardRock) MapScoreCalc.invertHitObjects(mapData.hitObjects);
 
@@ -62,6 +58,7 @@ class Viewer extends React.Component {
     // save time/score/combo points into state
     return scoreData;
   }
+
   updatewindowScale = () => {
     const requiredBufferY = 25;
     const requiredBufferX = 0;
@@ -73,6 +70,7 @@ class Viewer extends React.Component {
       return ({ windowScale: (window.innerHeight - requiredBufferY) / 480})
     })
   }
+
   componentDidMount() {
     // do necessary hit object calculations and assign score data to state
     this.callApi(this.props.beatmapId, this.props.player)
@@ -97,6 +95,7 @@ class Viewer extends React.Component {
     window.addEventListener('resize', this.updatewindowScale.bind(this))
     this.updatewindowScale()
   }
+
   componentWillUnmount() {
     window.removeEventListener('resize', this.updatewindowScale.bind(this))
   }
@@ -113,10 +112,12 @@ class Viewer extends React.Component {
       height: 25,
       width: this.state.windowScale * 640,
     }
+    const timeMultiplier = ModCalc.getTimeMultiplier(this.state.mods);
     return (
       <TimeKeeper
         totalTime = {this.state.totalReplayLength}
         cursorStatus = {this.state.cursorStatus}
+        timeMultiplier = {timeMultiplier}
         render={({ currTime,currCursorPos,timeControls,autoplay,timeSpeed }) =>
           <div>
             <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />

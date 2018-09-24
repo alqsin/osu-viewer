@@ -12,6 +12,8 @@ improve sounds
 remove use of componentWillMount (marked as UNSAFE in React)
 create "object" class for sliders, spinners and circles
 status describing player/beatmap
+fine tune mod ms calculations
+fix big black replays
 
 EVENTUALLY
 optimize rendering
@@ -19,7 +21,6 @@ optimize rendering
   add FadeInStart and other properties to circles/sliders instead of passing as props
 add key tracker
 add actual graphics
-add mods
 serve react app with node (put build folder into node app I guess?)
 add caching of replays (verify that score hasn't changed on api request)
 add hp bar, circular time indicator and accuracy

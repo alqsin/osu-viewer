@@ -1,7 +1,7 @@
 import React from 'react';
 
 class TimeKeeper extends React.Component {
-  // props are {totalTime}
+  // props are totalTime, timeMultiplier
   state = {
     timeSpeed: 1.0,
     currTime: 0,
@@ -23,7 +23,7 @@ class TimeKeeper extends React.Component {
           return { autoplay: false }
         }
 
-      return {currTime: currTime + timeSpeed * elapsedTime}
+      return {currTime: currTime + timeSpeed * this.props.timeMultiplier * elapsedTime}
     })
 
     this.newFrame = requestAnimationFrame(this.loop)
@@ -58,7 +58,7 @@ class TimeKeeper extends React.Component {
         toggleAutoplay: this.toggleAutoplay,
       },
       autoplay: this.state.autoplay,
-      timeSpeed: this.state.timeSpeed,
+      timeSpeed: this.state.timeSpeed * this.props.timeMultiplier,
     }
 
     return this.props.render(renderProps)
