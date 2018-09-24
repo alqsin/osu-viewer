@@ -3,7 +3,14 @@ const request = require('request');
 const beatmapIO = require('./beatmapIO.js')
 
 function decodeReplayData(replayData64, cb) {
-  const replayBuffer = Buffer.from(replayData64, 'base64');
+  let replayBuffer;
+  try {
+    replayBuffer = Buffer.from(replayData64, 'base64');
+  } catch (error) {
+    console.log(error);
+    cb(null);
+    return;
+  }
 
   my_lzma.decompress(replayBuffer, (result, error) => {
     if (error) {
@@ -110,6 +117,10 @@ module.exports = {
       else beatmapId = beatmapName; // default to beatmap name if no BeatmapID; need to clean this later
       requestReplayData(beatmapId, user, (replayResponse) => {
         decodeReplayData(JSON.parse(replayResponse).content, (replayData) => {
+          if (replayData == null) {
+            res.send(null);
+            return;
+          }
           requestBeatmapPlayerScores(beatmapId, user, (playerScores => {
             bitwiseMods = determineMods(JSON.parse(playerScores));
             res.send({bitwiseMods: bitwiseMods, replayData: replayData, beatmapData: beatmap})
